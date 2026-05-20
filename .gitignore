@@ -1,15 +1,39 @@
+# Dependencies
 /node_modules
-/public/hot
-/public/storage
-/storage/*.key
 /vendor
+
+# Vite build output
+/public/build
+/public/hot
+
+# Storage symlink
+/public/storage
+
+# Laravel environment
 .env
 .env.backup
+.env.production
+
+# Keys & secrets
+/storage/*.key
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+php-error.log
+
+# Testing
 .phpunit.result.cache
+
+# Docker / Homestead (optional)
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
+
+# IDE / Editor
 /.idea
 /.vscode
+*.swp
+*.swo
+.DS_Store
