@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta',
 
     /*
     |--------------------------------------------------------------------------
@@ -165,6 +165,8 @@ return [
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
         //DOM PDF
         Barryvdh\DomPDF\ServiceProvider::class,
+        //  Qr Code
+        // SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -234,6 +236,8 @@ return [
         'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
         //Dom PDF
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        // Qr Code
+        // 'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ],
 
 ];

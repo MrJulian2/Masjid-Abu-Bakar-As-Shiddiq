@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Khatib\khatibController;
 use App\Http\Controllers\Admin\Photo_Masjid\PhotoController;
 use App\Http\Controllers\Admin\Takmir_Masjid\TakmirController;
 use App\Http\Controllers\EventUser\EventController;
+use App\Http\Controllers\QurbanController;
 use App\Http\Controllers\userAbout\AboutController;
 use App\Http\Controllers\Users\GaleryController;
 
@@ -31,20 +32,17 @@ use App\Http\Controllers\Users\GaleryController;
 |
 */
 
-
-Route::get('/', [KasController::class,'index']);
+Route::get('/', [KasController::class, 'index']);
 // Route::get('/', function () {
 //     return view('User.PartialsUser.home');
 // });
-Route::get('/galery',[GaleryController::class,'index']);
+// Route::get('/galery',[GaleryController::class,'index']);
 
-Route::get('/about',[AboutController::class,'index']);
+Route::get('/about', [AboutController::class, 'index']);
 
-//event 
-Route::get('/event',[EventController::class,'index']);
-Route::get('/event/{id}',[EventController::class,'Show']);
-
-
+//event
+Route::get('/event', [EventController::class, 'index']);
+Route::get('/event/{id}', [EventController::class, 'Show']);
 
 Route::get('/donate', function () {
     return view('User.About Us.donate');
@@ -60,7 +58,6 @@ Auth::routes(['verify' => true]);
 
 //Admin
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
-
     Route::get('/', [HomeController::class, 'index'])->name('admin');
     //Admin Users
     // Route::get('/admin-users', [AdminusersController::class,'index']);
@@ -70,10 +67,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     // Route::get('/admin-users/edit/{id}', [AdminusersController::class,'update']);
     // Route::get('/admin-users/hapus/{id}', [AdminusersController::class,'destroy']);
     Route::resource('/users', AdminusersController::class)->middleware('admin:admin');
-    
+
     Route::resource('/photos', PhotoController::class)->middleware('admin:admin');
-    //event 
-    
+    //event
+
     Route::resource('/event', EventadminController::class);
     // Profile Setting
 
@@ -82,15 +79,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::resource('/khatib', khatibController::class);
 
     // Route::resource('/profile-setting', ProfilesettingController::class);
-    
-    Route::get('/profile-setting', [ProfilesettingController::class,'index']);
-    Route::post('/profile-setting',[ProfilesettingController::class,'update']);
+
+    Route::get('/profile-setting', [ProfilesettingController::class, 'index']);
+    Route::post('/profile-setting', [ProfilesettingController::class, 'update']);
     // Route::post('/profile-setting',[ProfilesettingController::class,'store']);
-    
 
     Route::get('/kas-masjid/pemasukan', [PemasukanController::class, 'index'])->middleware('admin:admin|bendahara');
     Route::get('/kas-masjid/pengeluaran', [PengeluaranController::class, 'index'])->middleware('admin:admin|bendahara');
-    Route::get('/kas-masjid/saldo', [SaldoweekController::class,'index'])->middleware('admin:admin|bendahara');
+    Route::get('/kas-masjid/saldo', [SaldoweekController::class, 'index'])->middleware('admin:admin|bendahara');
     Route::get('/kas-masjid/rekap', [RekapController::class, 'index']);
     //AJAX JSON
     //Pemasukan
@@ -106,12 +102,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::put('/data-pengeluaran/update/{id}', [PengeluaranController::class, 'update'])->middleware('admin:admin|bendahara');
     Route::delete('/data-pengeluaran/delete/{id}', [PengeluaranController::class, 'destroy'])->middleware('admin:admin|bendahara');
     //Saldo / minggu
-    Route::get('/data-saldo', [SaldoweekController::class,'datasaldo'])->middleware('admin:admin|bendahara');
-    Route::post('/data-saldo/add', [SaldoweekController::class,'store'])->middleware('admin:admin|bendahara');
-    Route::get('/data-saldo/edit/{id}', [SaldoweekController::class,'edit'])->middleware('admin:admin|bendahara');
-    Route::put('/data-saldo/update/{id}', [SaldoweekController::class,'update'])->middleware('admin:admin|bendahara');
+    Route::get('/data-saldo', [SaldoweekController::class, 'datasaldo'])->middleware('admin:admin|bendahara');
+    Route::post('/data-saldo/add', [SaldoweekController::class, 'store'])->middleware('admin:admin|bendahara');
+    Route::get('/data-saldo/edit/{id}', [SaldoweekController::class, 'edit'])->middleware('admin:admin|bendahara');
+    Route::put('/data-saldo/update/{id}', [SaldoweekController::class, 'update'])->middleware('admin:admin|bendahara');
     Route::delete('/data-saldo/delete/{id}', [SaldoweekController::class, 'destroy'])->middleware('admin:admin|bendahara');
-    
+
     // Rekap kas-masjid
     Route::get('/data-rekap', [RekapController::class, 'datarekap']);
 
@@ -119,11 +115,24 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::get('/laporan/kas-masjid', [LapkasmasjidController::class, 'index']);
     Route::get('/download-pdf', [LapkasmasjidController::class, 'DownloadSemuapdf']);
     Route::get('/download-pdf-periode', [LapkasmasjidController::class, 'DownloadPeriode'])->name('download-pdf-periode');
+
+    // Qurban
+
+    Route::get('/qurban', [QurbanController::class, 'index'])->name('qurban.index');
+    Route::get('/qurban/add', [QurbanController::class, 'add'])->name('qurban.add');
+    Route::post('/qurban/add', [QurbanController::class, 'store']);
+    Route::get('/qurban/edit/{id}', [QurbanController::class, 'edit'])->name('qurban.edit');
+    Route::put('/qurban/update/{id}', [QurbanController::class, 'update'])->name('qurban.update');
+    Route::delete('/qurban/delete/{id}', [QurbanController::class, 'destroy'])->name('qurban.destroy');
+
+    Route::get('/scan-qr', [QurbanController::class, 'scanPage'])->name('qurban.scan.page');
+    Route::post('/scan-qr', [QurbanController::class, 'scanStore'])->name('qurban.scan.store');
+
+    Route::get('/qurban/kupon', [QurbanController::class, 'kuponIndex'])->name('qurban.kupon.index');
+    Route::get('/qurban/laporan/pdf', [QurbanController::class, 'exportPdf'])->name('qurban.laporan.pdf');
 });
 
-
 Route::get('/setup', function () {
-
     Artisan::call('config:cache');
     Artisan::call('route:cache');
     Artisan::call('view:cache');
@@ -132,7 +141,6 @@ Route::get('/setup', function () {
 });
 
 Route::get('/clear', function () {
-
     Artisan::call('route:clear');
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
@@ -152,6 +160,3 @@ Route::get('/clear', function () {
 // });
 
 // require __DIR__ . '/auth.php';
-
-
-

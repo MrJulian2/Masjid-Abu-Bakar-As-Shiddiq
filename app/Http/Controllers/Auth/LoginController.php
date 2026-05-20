@@ -59,4 +59,9 @@ class LoginController extends Controller
             return redirect()->route('login')->withErrors(['email' => 'Username Atau Password Salah']);
         }
     }
+    public function logout(Request $request)
+    {
+        auth()->logout();
+        return redirect()->route('login');
+    }
 }

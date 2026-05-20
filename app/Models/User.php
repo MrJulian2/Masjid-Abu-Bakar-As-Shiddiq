@@ -60,4 +60,9 @@ class User extends Authenticatable implements MustVerifyEmail
    {
        return $this->hasMany(saldo::class);
    }
+
+    public function qurban()
+    {
+        return $this->hasMany(qurban::class);
+    }
 }
