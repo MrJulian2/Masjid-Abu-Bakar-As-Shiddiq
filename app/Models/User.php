@@ -65,4 +65,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(qurban::class);
     }
+
+    public function kuponqurban()
+    {
+        return $this->hasMany(kuponqurban::class, 'scanned_by');
+    }
 }

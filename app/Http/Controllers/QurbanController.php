@@ -45,6 +45,8 @@ class QurbanController extends Controller
 
         $kupon->update([
             'status' => 'sudah_diambil',
+            'scanned_by' => auth()->id(),
+            'scanned_at' => now(),
             'used_at' => now(),
         ]);
 
@@ -214,12 +216,15 @@ class QurbanController extends Controller
         // dd($qurban->id);
 
         $kupon = kuponqurban::where('qurban_id', $qurban->id)->get();
-
+        // dd($kupon->toArray());
         // dd($kupon->toArray());
         return view('Admin.Qurban.Edit', compact('qurban', 'kupon'));
     }
     public function update(Request $request, $id)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Hanya admin yang dapat mengedit data qurban');
+        }
         // 1. VALIDASI
         $validator = Validator::make(
             $request->all(),
@@ -313,6 +318,9 @@ class QurbanController extends Controller
     }
     public function destroy($id)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Hanya admin yang dapat mengedit data qurban');
+        }
         try {
             $qurban = qurban::findOrFail($id);
             $qurban->delete();
@@ -323,5 +331,31 @@ class QurbanController extends Controller
             Alert::error('Error', 'Terjadi kesalahan: ' . $e->getMessage());
             return back();
         }
+    }
+
+    public function validasiManual()
+    {
+        $qurban = Qurban::with('kuponqurban')->get();
+
+        return view('admin.qurban.validasi-manual', compact('qurban'));
+    }
+    public function validasiManualProcess($id)
+    {
+        $kupon = KuponQurban::findOrFail($id);
+
+        // cegah double ambil
+        if ($kupon->status == 'sudah_diambil') {
+            return back()->with('error', 'Kupon sudah divalidasi');
+        }
+
+        // update database
+        $kupon->update([
+            'status' => 'sudah_diambil',
+            'scanned_by' => auth()->id(),
+            'scanned_at' => now(),
+            'note' => 'Validasi manual tanpa kupon',
+        ]);
+
+        return back()->with('success', 'Validasi manual berhasil');
     }
 }

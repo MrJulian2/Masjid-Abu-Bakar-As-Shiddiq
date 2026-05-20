@@ -23,6 +23,8 @@ class CreateKuponqurbansTable extends Migration
                 ->default('belum_diambil');
             $table->foreignId('scanned_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('scanned_at')->nullable();
+            // note validasi manual
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

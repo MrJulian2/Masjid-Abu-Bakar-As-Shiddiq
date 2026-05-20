@@ -50,13 +50,15 @@
 
                         <h5>Daftar QR Code</h5>
 
-                        <table class="table table-bordered">
+                        <table id="qr-table" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
                                     <th>Kode QR</th>
                                     <th>QR Code</th>
                                     <th>Status</th>
+                                    <th>DiScan Oleh</th>
+                                    <th>DiScan Pada</th>
                                 </tr>
                             </thead>
 
@@ -71,6 +73,20 @@
                                                 <span class="badge badge-danger">Belum Diambil</span>
                                             @elseif ($k->status == 'sudah_diambil')
                                                 <span class="badge badge-success">Sudah Diambil</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($k->scanned_by)
+                                                {{ $k->scannedBy->name }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($k->scanned_at)
+                                                {{ \Carbon\Carbon::parse($k->scanned_at)->format('d M Y H:i') }}
+                                            @else
+                                                -
                                             @endif
                                         </td>
                                     </tr>
@@ -89,4 +105,39 @@
 
         </div>
     </section>
+@endsection
+@section('script')
+    {{-- sweet ALert Github --}}
+    <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+    <!-- InputMask/Moment JS -->
+    <script src="{{ asset('AdminLTE/plugins/moment/moment.min.js') }}"></script>
+    <!-- date-range-picker -->
+    <script src="{{ asset('AdminLTE/plugins/daterangepicker/daterangepicker.js') }}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('AdminLTE/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+    <script>
+        $(function() {
+
+            $('#qr-table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true,
+                "responsive": true,
+            });
+        });
+    </script>
 @endsection

@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
 
 
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
-        'bendahara' => \App\Http\Middleware\BendaharaMiddleware::class,
+        // 'bendahara' => \App\Http\Middleware\BendaharaMiddleware::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }

@@ -22,4 +22,8 @@ class kuponqurban extends Model
     {
         return $this->belongsTo(qurban::class, 'qurban_id');
     }
+    public function scannedBy()
+    {
+        return $this->belongsTo(User::class, 'scanned_by');
+    }
 }

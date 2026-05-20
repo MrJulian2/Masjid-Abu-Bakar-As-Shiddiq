@@ -122,14 +122,23 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::get('/qurban/add', [QurbanController::class, 'add'])->name('qurban.add');
     Route::post('/qurban/add', [QurbanController::class, 'store']);
     Route::get('/qurban/edit/{id}', [QurbanController::class, 'edit'])->name('qurban.edit');
-    Route::put('/qurban/update/{id}', [QurbanController::class, 'update'])->name('qurban.update');
-    Route::delete('/qurban/delete/{id}', [QurbanController::class, 'destroy'])->name('qurban.destroy');
-
+    Route::put('/qurban/update/{id}', [QurbanController::class, 'update'])
+        ->name('qurban.update')
+        ->middleware('admin:admin');
+    Route::delete('/qurban/delete/{id}', [QurbanController::class, 'destroy'])
+        ->name('qurban.destroy')
+        ->middleware('admin:admin');
     Route::get('/scan-qr', [QurbanController::class, 'scanPage'])->name('qurban.scan.page');
     Route::post('/scan-qr', [QurbanController::class, 'scanStore'])->name('qurban.scan.store');
 
     Route::get('/qurban/kupon', [QurbanController::class, 'kuponIndex'])->name('qurban.kupon.index');
     Route::get('/qurban/laporan/pdf', [QurbanController::class, 'exportPdf'])->name('qurban.laporan.pdf');
+
+    Route::get('/qurban/validasi-manual', [QurbanController::class, 'validasiManual'])
+        ->name('qurban.validasi.manual');
+
+    Route::post('/qurban/validasi-manual/{id}', [QurbanController::class, 'validasiManualProcess'])
+        ->name('qurban.validasi.manual.process');
 });
 
 Route::get('/setup', function () {
