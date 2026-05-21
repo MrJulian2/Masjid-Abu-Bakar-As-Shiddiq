@@ -101,6 +101,8 @@
                                         <option value="wakil">Wakil</option>
                                         <option value="bendahara">Bendahara</option>
                                         <option value="sekretaris">Sekretaris</option>
+                                        <option value="panitia_qurban">Panitia Qurban</option>
+                                        <option value="event_admin">Event Admin</option>
                                     </select>
                                             @error('role')                
                                             <div class="invalid-feedback">{{ $message }}</div>     
