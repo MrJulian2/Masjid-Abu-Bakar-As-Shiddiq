@@ -66,10 +66,10 @@
                                             <td>: {{ $item->nama }}</td>
                                         </tr>
 
-                                        <tr>
+                                        {{-- <tr>
                                             <td><b>No HP</b></td>
                                             <td>: {{ $item->nomor_hp }}</td>
-                                        </tr>
+                                        </tr> --}}
 
                                         <tr>
                                             <td><b>Alamat</b></td>
