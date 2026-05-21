@@ -212,24 +212,26 @@
                                  <p> Kelola Penerima</p>
                              </a>
                          </li>
-                         <li class="nav-item">
-                             <a href="{{ route('qurban.scan.page') }}" class="nav-link">
-                                 <i class="far fa-circle nav-icon"></i>
-                                 <p> Scan Qr</p>
-                             </a>
-                         </li>
-                         <li class="nav-item">
-                             <a href="{{ route('qurban.kupon.index') }}" class="nav-link">
-                                 <i class="far fa-circle nav-icon"></i>
-                                 <p> Kupon dan Laporan </p>
-                             </a>
-                         </li>
-                         <li class="nav-item">
-                             <a href="{{ route('qurban.validasi.manual') }}" class="nav-link">
-                                 <i class="far fa-circle nav-icon"></i>
-                                 <p> Validasi Manual </p>
-                             </a>
-                         </li>
+                         @if (Auth::user()->role === 'admin')
+                             <li class="nav-item">
+                                 <a href="{{ route('qurban.scan.page') }}" class="nav-link">
+                                     <i class="far fa-circle nav-icon"></i>
+                                     <p> Scan Qr</p>
+                                 </a>
+                             </li>
+                             <li class="nav-item">
+                                 <a href="{{ route('qurban.kupon.index') }}" class="nav-link">
+                                     <i class="far fa-circle nav-icon"></i>
+                                     <p> Kupon dan Laporan </p>
+                                 </a>
+                             </li>
+                             <li class="nav-item">
+                                 <a href="{{ route('qurban.validasi.manual') }}" class="nav-link">
+                                     <i class="far fa-circle nav-icon"></i>
+                                     <p> Validasi Manual </p>
+                                 </a>
+                             </li>
+                         @endif
                      </ul>
                  </li>
 
