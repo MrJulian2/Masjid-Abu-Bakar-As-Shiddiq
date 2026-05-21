@@ -152,7 +152,42 @@
                     </div>
                 @endforeach
 
+                <form method="GET" action="{{ route('qurban.index') }}" class="mb-3">
 
+                    <div class="row">
+
+                        <div class="col-md-4 mb-2">
+                            <input type="text" name="nama" class="form-control" placeholder="Cari Nama..."
+                                value="{{ request('nama') }}">
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <input type="number" name="rw" class="form-control" placeholder="RW"
+                                value="{{ request('rw') }}">
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <input type="number" name="rt" class="form-control" placeholder="RT"
+                                value="{{ request('rt') }}">
+                        </div>
+
+                        {{-- tombol cari --}}
+                        <div class="col-md-2 mb-2">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Cari
+                            </button>
+                        </div>
+
+                        {{-- RESET (di luar submit form logic) --}}
+                        <div class="col-md-12">
+                            <a href="{{ route('qurban.index') }}" class="btn btn-secondary btn-sm">
+                                Reset Filter
+                            </a>
+                        </div>
+
+                    </div>
+
+                </form>
 
                 <div class="card-header">
                     <h3 class="card-title">Data Penerima Qurban</h3>
@@ -179,7 +214,7 @@
 
                     </div>
                 @endif
-                
+
                 <div class="card-body">
                     <table id="tabel" class="table table-bordered table-striped">
                         <thead>

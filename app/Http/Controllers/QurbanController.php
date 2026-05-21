@@ -92,6 +92,7 @@ class QurbanController extends Controller
         $qurban = Qurban::with(['kuponqurban', 'user'])
             ->when($request->rw, fn($q) => $q->where('rw', $request->rw))
             ->when($request->rt, fn($q) => $q->where('rt', $request->rt))
+            ->when($request->nama, fn($q) => $q->where('nama', 'like', '%' . $request->nama . '%'))
             ->orderByRaw('CAST(rw AS UNSIGNED) ASC')
             ->orderByRaw('CAST(rt AS UNSIGNED) ASC')
             ->get();
