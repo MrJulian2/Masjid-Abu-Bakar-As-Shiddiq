@@ -103,7 +103,7 @@
 
                                         <td>
                                             @if ($k->scanned_at)
-                                                {{ \Carbon\Carbon::parse($k->scanned_at)->format('d M Y H:i') }}
+                                                {{-- {{ \Carbon\Carbon::parse($k->scanned_at)->format('d M Y H:i') }} --}}
                                             @else
                                                 -
                                             @endif
