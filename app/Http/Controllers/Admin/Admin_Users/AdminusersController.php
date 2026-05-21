@@ -135,7 +135,7 @@ class AdminusersController extends Controller
             'name' => 'required|string|min:3|max:100',
             'username' => 'required|string|min:6|max:100|unique:users,username,'.$id,
             'email' => ' required|email|string|max:100|unique:users,email,'.$id,
-            'role' => 'in:admin,ketua,wakil,bendahara,sekretaris',
+            'role' => 'in:admin,ketua,wakil,bendahara,sekretaris,panitia_qurban,event_admin',
         ], [
             'nama.required' => 'Nama Harus Di Isi',
             'nama.min' => 'Nama Minimal 3 Huruf',
