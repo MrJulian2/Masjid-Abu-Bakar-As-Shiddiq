@@ -48,7 +48,7 @@
 
                     <hr>
 
-                    <button class="btn btn-primary mb-3" type="submit">
+                    <button type="submit" class="btn btn-primary mb-3">
                         Update
                     </button>
 
@@ -72,7 +72,6 @@
                         @foreach ($kupon as $key => $k)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-
                                 <td>{{ $k->qr_code }}</td>
 
                                 <td>
@@ -82,14 +81,12 @@
                                 <td>
                                     @if ($k->status == 'belum_diambil')
                                         <span class="badge badge-danger">Belum Diambil</span>
-                                    @elseif ($k->status == 'sudah_diambil')
+                                    @else
                                         <span class="badge badge-success">Sudah Diambil</span>
                                     @endif
                                 </td>
 
-                                <td>
-                                    {{ $k->scannedBy->name ?? '-' }}
-                                </td>
+                                <td>{{ $k->scannedBy->name ?? '-' }}</td>
 
                                 <td>
                                     {{ $k->scanned_at
@@ -111,32 +108,21 @@
 
 @section('script')
 
-<script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/moment/moment.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/daterangepicker/daterangepicker.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-
-<script src="{{ asset('AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-
 <script>
-    $(function () {
+$(function () {
 
-        $('#qr-table').DataTable({
-            paging: true,
-            lengthChange: true,
-            searching: true,
-            ordering: true,
-            info: true,
+    $('#qr-table').DataTable({
+        paging: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        info: true,
 
-            autoWidth: false,
-            responsive: true
-        });
-
+        autoWidth: false,
+        responsive: true
     });
+
+});
 </script>
 
 @endsection
