@@ -1,340 +1,357 @@
 @extends('admin.index')
 
 @section('content')
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        {{-- HEADER --}}
+        <div class="d-flex justify-content-between align-items-center mb-3 no-print">
 
-        <h3 class="mb-0">Cetak Kupon Qurban</h3>
+            {{-- LEFT --}}
+            <h3 class="mb-0">Cetak Kupon Qurban</h3>
 
-        <div class="d-flex gap-2">
+            {{-- RIGHT BUTTON GROUP --}}
+            <div class="d-flex gap-2">
 
-            <a href="{{ route('qurban.laporan.pdf') }}" class="btn btn-danger">
-                <i class="fas fa-file-pdf"></i> Export PDF
-            </a>
+                <a href="{{ route('qurban.laporan.pdf') }}" class="btn btn-danger">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </a>
 
-            <button onclick="window.print()" class="btn btn-primary">
-                <i class="fas fa-print"></i> Print Kupon
-            </button>
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print"></i> Print Kupon
+                </button>
 
-            <a href="{{ route('qurban.index') }}" class="btn btn-secondary">
-                Kembali
-            </a>
+                <a href="{{ route('qurban.index') }}" class="btn btn-secondary">
+                    Kembali
+                </a>
+
+            </div>
 
         </div>
 
-    </div>
-
-    {{-- PRINT AREA --}}
-    <div class="print-area">
-
-        @foreach ($qurban->chunk(10) as $chunk)
-        <div class="page">
+        {{-- AREA CETAK (SEMUA KUPON 1 GRID SAJA) --}}
+        <div class="print-area">
 
             <div class="kupon-grid">
 
-                @foreach ($chunk as $item)
+                @foreach ($qurban as $item)
                     @foreach ($item->kuponqurban as $kupon)
+                        <div class="kupon-card">
 
-                    <div class="kupon-card">
+                            {{-- KOP --}}
+                            <div class="kop">
+                                <div class="masjid">
+                                    TAKMIR MASJID ABU BAKAR AS-SHIDDIQI
+                                </div>
 
-                        {{-- KOP --}}
-                        <div class="kop">
-                            <div class="masjid">
-                                TAKMIR MASJID ABU BAKAR AS-SHIDDIQI
+                                <div class="alamat">
+                                    Jl. Kaca Piring Lingkungan Gebang Tengah <br>
+                                    Kelurahan Gebang Kecamatan Patrang Kabupaten Jember
+                                </div>
                             </div>
 
-                            <div class="alamat">
-                                Jl. Kaca Piring Lingkungan Gebang Tengah <br>
-                                Kelurahan Gebang Kecamatan Patrang Kabupaten Jember
-                            </div>
-                        </div>
-
-                        {{-- JUDUL --}}
-                        <div class="judul-kupon">
-                            KUPON PENGAMBILAN DAGING QURBAN
-                        </div>
-
-                        {{-- CONTENT --}}
-                        <div class="content-kupon">
-
-                            {{-- DATA --}}
-                            <div class="isi-kupon">
-
-                                <table width="100%">
-                                    <tr>
-                                        <td><b>Nama</b></td>
-                                        <td>: {{ $item->nama }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td><b>No HP</b></td>
-                                        <td>: {{ $item->nomor_hp }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td><b>Alamat</b></td>
-                                        <td>: {{ $item->alamat }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td><b>RT / RW</b></td>
-                                        <td>: {{ $item->rt }} / {{ $item->rw }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td colspan="2" class="note-kupon">
-                                            <b>Note:</b> Kupon harap dibawa saat pengambilan daging qurban
-                                        </td>
-                                    </tr>
-                                </table>
-
+                            {{-- JUDUL --}}
+                            <div class="judul-kupon">
+                                KUPON PENGAMBILAN DAGING QURBAN
                             </div>
 
-                            {{-- QR --}}
-                            <div class="qr-area">
+                            {{-- CONTENT --}}
+                            <div class="content-kupon">
 
-                                {!! QrCode::size(85)->generate($kupon->qr_code) !!}
+                                {{-- DATA --}}
+                                <div class="isi-kupon">
 
-                                <div class="kode-kupon">
-                                    {{ $kupon->qr_code }}
+                                    <table width="100%">
+                                        <tr>
+                                            <td width="70"><b>Nama</b></td>
+                                            <td>: {{ $item->nama }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>No HP</b></td>
+                                            <td>: {{ $item->nomor_hp }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>Alamat</b></td>
+                                            <td>: {{ $item->alamat }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>RT / RW</b></td>
+                                            <td>: {{ $item->rt }} / {{ $item->rw }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="note-kupon">
+                                                <b>Note:</b> Kupon harap dibawa saat pengambilan daging qurban
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+
+                                {{-- QR --}}
+                                <div class="qr-area">
+
+                                    {!! QrCode::size(90)->generate($kupon->qr_code) !!}
+
+                                    <div class="kode-kupon">
+                                        {{ $kupon->qr_code }}
+                                    </div>
+
                                 </div>
 
                             </div>
 
                         </div>
-
-                    </div>
-
                     @endforeach
                 @endforeach
 
             </div>
 
         </div>
-        @endforeach
 
     </div>
-
-</div>
 @endsection
 
-
 @section('script')
-<style>
+    <style>
+        /* =========================
+                A4 SETTING
+            ========================= */
+        @page {
+            size: A4;
+            margin: 5mm;
+        }
 
-/* =========================
-   GLOBAL FIX
-========================= */
-* {
-    box-sizing: border-box;
-}
+        /* =========================
+                GLOBAL RESET
+            ========================= */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            font-family: Arial, sans-serif;
+        }
 
-/* =========================
-   PAGE FIX (ANTI ACak)
-========================= */
-.page {
-    width: 210mm;
-    height: 297mm;
-    padding: 5mm;
-    overflow: hidden;
-    page-break-after: always;
-}
+        /* =========================
+                GRID 10 KUPON / A4
+            ========================= */
+        .kupon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+        }
 
-/* =========================
-   BODY
-========================= */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background: #fff;
-}
+        /* =========================
+                CARD KUPON (STABIL)
+            ========================= */
+        .kupon-card {
+            border: 1px dashed #000;
+            background: #fff;
 
-/* =========================
-   GRID (FLEX STABIL)
-========================= */
-.kupon-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
+            padding: 10px;
 
-/* =========================
-   CARD (FIX HEIGHT = SAMA SEMUA)
-========================= */
-.kupon-card {
-    width: calc(50% - 6px);
+            height: 220px;
+            overflow: visible;
 
-    height: 230px;   /* 🔥 FIX TINGGI WAJIB */
-    overflow: hidden;
+            break-inside: avoid;
+            page-break-inside: avoid;
 
-    border: 1px dashed #000;
-    background: #fff;
+            display: flex;
+            flex-direction: column;
+        }
 
-    padding: 8px;
+        /* =========================
+                KOP
+            ========================= */
+        .kop {
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 6px;
+            margin-bottom: 6px;
+        }
 
-    display: flex;
-    flex-direction: column;
+        .masjid {
+            font-weight: bold;
+            font-size: 13px;
+            line-height: 1.2;
+        }
 
-    page-break-inside: avoid;
-    break-inside: avoid;
-}
+        .alamat {
+            font-size: 9px;
+            line-height: 1.3;
+        }
 
-/* =========================
-   KOP
-========================= */
-.kop {
-    text-align: center;
-    border-bottom: 1px solid #000;
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-}
+        /* =========================
+                JUDUL
+            ========================= */
+        .judul-kupon {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
 
-.masjid {
-    font-weight: bold;
-    font-size: 12px;
-}
+        /* =========================
+                CONTENT
+            ========================= */
+        .content-kupon {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
 
-.alamat {
-    font-size: 9px;
-    line-height: 1.2;
-}
+            flex: 1;
+        }
 
-/* =========================
-   JUDUL
-========================= */
-.judul-kupon {
-    text-align: center;
-    font-weight: bold;
-    font-size: 11px;
-    margin-bottom: 5px;
-}
+        /* =========================
+                DATA (TEKS LEBIH BESAR)
+            ========================= */
+        .isi-kupon {
+            width: 68%;
 
-/* =========================
-   CONTENT
-========================= */
-.content-kupon {
-    display: flex;
-    justify-content: space-between;
-    gap: 6px;
-    flex: 1;
-}
+            font-size: 13.5px;
+            /* 🔥 FIX: lebih besar */
+            line-height: 1.5;
+        }
 
-/* =========================
-   DATA (FIX HEIGHT AREA)
-========================= */
-.isi-kupon {
-    width: 68%;
-    font-size: 11px;
-    line-height: 1.2;
+        .isi-kupon table td {
+            padding-bottom: 3px;
+            vertical-align: top;
+        }
 
-    height: 120px; /* 🔥 FIX AREA TEKS */
-    overflow: hidden;
-}
+        /* label kiri (Nama, HP, dll) */
+        .isi-kupon table td:first-child {
+            width: 75px;
+            font-weight: 600;
+        }
 
-.isi-kupon table td {
-    padding-bottom: 2px;
-    vertical-align: top;
-}
+        /* =========================
+                QR AREA (FIX TOTAL CENTER)
+            ========================= */
+        .qr-area {
+            width: 32%;
 
-.isi-kupon table td:first-child {
-    width: 65px;
-    font-weight: 600;
-}
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
 
-/* =========================
-   QR AREA (FIX)
-========================= */
-.qr-area {
-    width: 32%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+            min-height: 120px;
+        }
 
-    height: 120px; /* FIX */
-}
+        /* =========================
+                QR CODE (AMAN TIDAK HILANG)
+            ========================= */
+        .qr-area svg {
+            width: 110px !important;
+            height: 110px !important;
 
-.qr-area svg {
-    width: 85px !important;
-    height: 85px !important;
-}
+            max-width: 100%;
+            max-height: 100%;
 
-.kode-kupon {
-    font-size: 8px;
-    margin-top: 3px;
-    text-align: center;
-    word-break: break-word;
-    font-weight: bold;
-}
+            display: block;
+            margin: 0 auto;
+        }
 
-/* =========================
-   NOTE
-========================= */
-.note-kupon {
-    font-size: 8px;
-    font-style: italic;
-    text-align: center;
-    padding-top: 4px;
-}
+        /* =========================
+                KODE QR
+            ========================= */
+        .kode-kupon {
+            font-size: 9px;
+            margin-top: 4px;
+            line-height: 1.2;
+            text-align: center;
+            word-break: break-all;
+            font-weight: bold;
+        }
 
-/* =========================
-   PRINT MODE
-========================= */
-@media print {
+        /* =========================
+                PRINT FIX
+            ========================= */
+        @media print {
 
-    .no-print {
-        display: none !important;
-    }
+            .no-print {
+                display: none !important;
+            }
 
-    body {
-        margin: 0;
-        padding: 0;
-    }
+            body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+            }
 
-    .page {
-        width: 210mm;
-        height: 297mm;
-        overflow: hidden;
-        page-break-after: always;
-    }
+            .container-fluid {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
 
-    .kupon-card {
-        height: 230px !important;
-        overflow: hidden !important;
-    }
+            /* hide admin layout */
+            .main-header,
+            .main-sidebar,
+            .navbar,
+            .main-footer,
+            footer,
+            .brand-link {
+                display: none !important;
+            }
+        }
 
-    .main-header,
-    .main-sidebar,
-    .navbar,
-    .main-footer,
-    footer,
-    .brand-link {
-        display: none !important;
-    }
-}
+        .note-kupon {
+            padding-top: 6px;
+            font-size: 8.5px;
+            font-style: italic;
+            text-align: center;
+            color: #000;
+            line-height: 1.2;
+        }
 
-/* =========================
-   MOBILE
-========================= */
-@media screen and (max-width: 768px) {
+        /* =========================
+       MOBILE RESPONSIVE ONLY
+       (TIDAK MENGGANGGU PRINT)
+    ========================= */
+        @media screen and (max-width: 768px) {
 
-    .kupon-grid {
-        flex-direction: column;
-    }
+            /* GRID jadi 1 kolom */
+            .kupon-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+                padding: 10px;
+            }
 
-    .kupon-card {
-        width: 100%;
-        height: auto;
-    }
+            /* CARD auto tinggi */
+            .kupon-card {
+                height: auto !important;
+                min-height: unset !important;
+            }
 
-    .qr-area svg {
-        width: 75px !important;
-        height: 75px !important;
-    }
-}
+            /* teks lebih kecil biar muat */
+            .isi-kupon {
+                font-size: 12px !important;
+                width: 65% !important;
+            }
 
-</style>
+            /* QR lebih kecil */
+            .qr-area svg {
+                width: 80px !important;
+                height: 80px !important;
+            }
+
+            /* HEADER BUTTON STACK */
+            .no-print .d-flex {
+                flex-direction: column !important;
+                width: 100%;
+            }
+
+            .no-print .btn {
+                width: 100% !important;
+            }
+
+            .no-print h3 {
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
 @endsection
