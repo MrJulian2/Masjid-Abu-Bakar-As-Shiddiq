@@ -337,6 +337,17 @@ class QurbanController extends Controller
     public function validasiManual()
     {
         $qurban = Qurban::with('kuponqurban')->get();
+        // cek kalau jumlah kupon > 1 bulk update
+        foreach ($qurban as $q) {
+            if ($q->kuponqurban->count() > 0) {
+                $q->kuponqurban()->where('status', 'belum_diambil')->update([
+                    'status' => 'sudah_diambil',
+                    'scanned_by' => auth()->id(),
+                    'scanned_at' => now(),
+                    'note' => 'Validasi manual tanpa kupon',
+                ]);
+            }
+        }
 
         return view('admin.Qurban.validasi-manual', compact('qurban'));
     }
