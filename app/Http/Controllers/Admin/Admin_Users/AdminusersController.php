@@ -57,7 +57,7 @@ class AdminusersController extends Controller
             'username' => 'required|string|alpha_dash|min:6|max:100|unique:users',
             'email' => ' required|email|string|max:100|unique:users',
             'password'=> ['required','min:6','confirmed', Rules\Password::defaults()],
-            'role'=> 'in:admin,ketua,wakil,bendahara,sekretaris',
+            'role'=> 'in:admin,ketua,wakil,bendahara,sekretaris,panitia_qurban,event_admin',
         ],[
             'nama.required'=> 'Nama Harus Di Isi',
             'nama.min' => 'Nama Minimal 3 Huruf',
