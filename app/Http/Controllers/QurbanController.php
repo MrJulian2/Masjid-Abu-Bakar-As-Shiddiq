@@ -87,52 +87,44 @@ class QurbanController extends Controller
     public function index(Request $request)
     {
         // ==================================================
-        // 1. DATA QURBAN (FILTERABLE)
+        // 1. DATA QURBAN (FILTER + SORT)
         // ==================================================
-        $qurbanQuery = Qurban::with(['kuponqurban', 'user']);
-
-        if ($request->rw) {
-            $qurbanQuery->where('rw', $request->rw);
-        }
-
-        if ($request->rt) {
-            $qurbanQuery->where('rt', $request->rt);
-        }
-
-        $qurban = $qurbanQuery->get();
+        $qurban = Qurban::with(['kuponqurban', 'user'])
+            ->when($request->rw, fn($q) => $q->where('rw', $request->rw))
+            ->when($request->rt, fn($q) => $q->where('rt', $request->rt))
+            ->orderByRaw('CAST(rw AS UNSIGNED) ASC')
+            ->orderByRaw('CAST(rt AS UNSIGNED) ASC')
+            ->get();
 
         // ==================================================
-        // 2. STATUS PER QURBAN (OPTIMASI LOOP)
+        // 2. STATUS QURBAN (IN MEMORY - NO QUERY LAGI)
         // ==================================================
         foreach ($qurban as $row) {
-            // dd($row->toArray());
             $total = $row->kuponqurban->count();
             $sudah = $row->kuponqurban->where('status', 'sudah_diambil')->count();
 
-            if ($total == 0) {
-                $row->status = 'Belum Diambil';
-            } elseif ($sudah == 0) {
-                $row->status = 'Belum Diambil';
-            } elseif ($sudah < $total) {
-                $row->status = 'Sebagian Diambil';
-            } else {
-                $row->status = 'Sudah Diambil';
-            }
+            $row->status = match (true) {
+                $total === 0 => 'Belum Diambil',
+                $sudah === 0 => 'Belum Diambil',
+                $sudah < $total => 'Sebagian Diambil',
+                default => 'Sudah Diambil',
+            };
 
-            $row->updated_by_name = $row->updated_by ? optional(\App\Models\User::find($row->updated_by))->name : '-';
+            $row->updated_by_name = optional(\App\Models\User::find($row->updated_by))->name ?? '-';
         }
 
         // ==================================================
-        // 3. STATISTIK RW / RT (DASHBOARD CARD)
+        // 3. STATISTIK RW / RT (OPTIMIZED QUERY)
         // ==================================================
-        $rwStats = KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')->groupBy('qurbans.rw', 'qurbans.rt')->get();
-
-        $rwGrouped = $rwStats->groupBy('rw');
+        $rwStats = KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')->groupBy('qurbans.rw', 'qurbans.rt')->get()->sortBy(fn($item) => (int) $item->rw)->groupBy('rw')->map(fn($items) => $items->sortBy(fn($i) => (int) $i->rt));
 
         // ==================================================
         // 4. RETURN VIEW
         // ==================================================
-        return view('admin.Qurban.index', compact('qurban', 'rwGrouped'));
+        return view('admin.Qurban.index', [
+            'qurban' => $qurban,
+            'rwGrouped' => $rwStats,
+        ]);
     }
 
     public function add()
