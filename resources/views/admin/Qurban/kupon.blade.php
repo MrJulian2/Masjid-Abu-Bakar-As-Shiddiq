@@ -29,85 +29,91 @@
     {{-- PRINT AREA --}}
     <div class="print-area">
 
-        <div class="kupon-grid">
+        @foreach ($qurban->chunk(10) as $chunk)
+        <div class="page">
 
-            @foreach ($qurban as $item)
-                @foreach ($item->kuponqurban as $kupon)
+            <div class="kupon-grid">
 
-                <div class="kupon-card">
+                @foreach ($chunk as $item)
+                    @foreach ($item->kuponqurban as $kupon)
 
-                    {{-- KOP --}}
-                    <div class="kop">
-                        <div class="masjid">
-                            TAKMIR MASJID ABU BAKAR AS-SHIDDIQI
+                    <div class="kupon-card">
+
+                        {{-- KOP --}}
+                        <div class="kop">
+                            <div class="masjid">
+                                TAKMIR MASJID ABU BAKAR AS-SHIDDIQI
+                            </div>
+
+                            <div class="alamat">
+                                Jl. Kaca Piring Lingkungan Gebang Tengah <br>
+                                Kelurahan Gebang Kecamatan Patrang Kabupaten Jember
+                            </div>
                         </div>
 
-                        <div class="alamat">
-                            Jl. Kaca Piring Lingkungan Gebang Tengah <br>
-                            Kelurahan Gebang Kecamatan Patrang Kabupaten Jember
-                        </div>
-                    </div>
-
-                    {{-- JUDUL --}}
-                    <div class="judul-kupon">
-                        KUPON PENGAMBILAN DAGING QURBAN
-                    </div>
-
-                    {{-- CONTENT --}}
-                    <div class="content-kupon">
-
-                        {{-- DATA --}}
-                        <div class="isi-kupon">
-
-                            <table width="100%">
-                                <tr>
-                                    <td><b>Nama</b></td>
-                                    <td>: {{ $item->nama }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td><b>No HP</b></td>
-                                    <td>: {{ $item->nomor_hp }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td><b>Alamat</b></td>
-                                    <td>: {{ $item->alamat }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td><b>RT / RW</b></td>
-                                    <td>: {{ $item->rt }} / {{ $item->rw }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td colspan="2" class="note-kupon">
-                                        <b>Note:</b> Kupon harap dibawa saat pengambilan daging qurban
-                                    </td>
-                                </tr>
-                            </table>
-
+                        {{-- JUDUL --}}
+                        <div class="judul-kupon">
+                            KUPON PENGAMBILAN DAGING QURBAN
                         </div>
 
-                        {{-- QR --}}
-                        <div class="qr-area">
+                        {{-- CONTENT --}}
+                        <div class="content-kupon">
 
-                            {!! QrCode::size(90)->generate($kupon->qr_code) !!}
+                            {{-- DATA --}}
+                            <div class="isi-kupon">
 
-                            <div class="kode-kupon">
-                                {{ $kupon->qr_code }}
+                                <table width="100%">
+                                    <tr>
+                                        <td><b>Nama</b></td>
+                                        <td>: {{ $item->nama }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><b>No HP</b></td>
+                                        <td>: {{ $item->nomor_hp }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><b>Alamat</b></td>
+                                        <td>: {{ $item->alamat }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><b>RT / RW</b></td>
+                                        <td>: {{ $item->rt }} / {{ $item->rw }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td colspan="2" class="note-kupon">
+                                            <b>Note:</b> Kupon harap dibawa saat pengambilan daging qurban
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+
+                            {{-- QR --}}
+                            <div class="qr-area">
+
+                                {!! QrCode::size(90)->generate($kupon->qr_code) !!}
+
+                                <div class="kode-kupon">
+                                    {{ $kupon->qr_code }}
+                                </div>
+
                             </div>
 
                         </div>
 
                     </div>
 
-                </div>
-
+                    @endforeach
                 @endforeach
-            @endforeach
+
+            </div>
 
         </div>
+        @endforeach
 
     </div>
 
@@ -123,6 +129,13 @@
 ========================= */
 * {
     box-sizing: border-box;
+}
+
+/* =========================
+   PAGE BREAK CONTROL
+========================= */
+.page {
+    page-break-after: always;
 }
 
 /* =========================
@@ -147,27 +160,31 @@ body {
    GRID
 ========================= */
 .kupon-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
 }
 
 /* =========================
-   CARD
+   CARD (2 KOLOM STABIL)
 ========================= */
 .kupon-card {
+    width: calc(50% - 6px);
+
     border: 1px dashed #000;
     background: #fff;
 
     padding: 8px;
 
     min-height: 220px;
-    height: auto;
 
     overflow: hidden;
 
     display: flex;
     flex-direction: column;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
 }
 
 /* =========================
@@ -263,7 +280,7 @@ body {
 }
 
 /* =========================
-   PRINT FIX
+   PRINT FIX TOTAL
 ========================= */
 @media print {
 
@@ -278,6 +295,15 @@ body {
 
     .kupon-grid {
         gap: 5px;
+    }
+
+    .kupon-card {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .page {
+        page-break-after: always;
     }
 
     .isi-kupon {
@@ -309,10 +335,11 @@ body {
 @media screen and (max-width: 768px) {
 
     .kupon-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
     .kupon-card {
+        width: 100%;
         min-height: auto;
     }
 
