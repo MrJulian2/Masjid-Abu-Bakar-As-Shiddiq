@@ -103,9 +103,9 @@
             <th>No HP</th>
             <th>Alamat</th>
             <th>RT/RW</th>
-            <th>Total</th>
-            <th>Sudah</th>
-            <th>Belum</th>
+            <th>Total Kupon</th>
+            <th>Sudah Diambil</th>
+            <th>Belum Diambil</th>
         </tr>
     </thead>
 
@@ -160,9 +160,9 @@
 
     <tr>
         <th>RT</th>
-        <th>Total</th>
-        <th>Sudah</th>
-        <th>Belum</th>
+        <th>Total Kupon</th>
+        <th>Sudah Diambil</th>
+        <th>Belum Diambil</th>
     </tr>
 
     @php
@@ -189,7 +189,7 @@
     @endforeach
 
     <tr class="highlight">
-        <td>Total RW {{ $rw }}</td>
+        <td>Total Kupon RW {{ $rw }}</td>
         <td>{{ $rwTotal }}</td>
         <td>{{ $rwSudah }}</td>
         <td>{{ $rwBelum }}</td>
