@@ -19,7 +19,7 @@ class QurbanController extends Controller
 
     public function scanPage()
     {
-        return view('Admin.Qurban.Scan');
+        return view('admin.Qurban.scan');
     }
     public function scanStore(Request $request)
     {
@@ -70,7 +70,7 @@ class QurbanController extends Controller
             ->orderBy('rw')
             ->orderBy('rt')
             ->get();
-        return view('Admin.Qurban.Kupon', compact('qurban'));
+        return view('admin.Qurban.kupon', compact('qurban'));
     }
 
     public function exportPdf()
@@ -80,7 +80,7 @@ class QurbanController extends Controller
         // 🔥 REKAP RW / RT
         $rwStats = \App\Models\KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')->groupBy('qurbans.rw', 'qurbans.rt')->orderBy('qurbans.rw')->orderBy('qurbans.rt')->get()->groupBy('rw');
 
-        $pdf = Pdf::loadView('Admin.Qurban.laporan-pdf', compact('qurban', 'rwStats'))->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('admin.Qurban.laporan-pdf', compact('qurban', 'rwStats'))->setPaper('a4', 'portrait');
 
         return $pdf->download('laporan-qurban.pdf');
     }
@@ -105,6 +105,7 @@ class QurbanController extends Controller
         // 2. STATUS PER QURBAN (OPTIMASI LOOP)
         // ==================================================
         foreach ($qurban as $row) {
+            // dd($row->toArray());
             $total = $row->kuponqurban->count();
             $sudah = $row->kuponqurban->where('status', 'sudah_diambil')->count();
 
@@ -131,12 +132,12 @@ class QurbanController extends Controller
         // ==================================================
         // 4. RETURN VIEW
         // ==================================================
-        return view('Admin.Qurban.index', compact('qurban', 'rwGrouped'));
+        return view('admin.Qurban.index', compact('qurban', 'rwGrouped'));
     }
 
     public function add()
     {
-        return view('Admin.Qurban.Tambah');
+        return view('admin.Qurban.tambah');
     }
 
     public function store(Request $request)
@@ -218,7 +219,7 @@ class QurbanController extends Controller
         $kupon = kuponqurban::where('qurban_id', $qurban->id)->get();
         // dd($kupon->toArray());
         // dd($kupon->toArray());
-        return view('Admin.Qurban.Edit', compact('qurban', 'kupon'));
+        return view('admin.Qurban.edit', compact('qurban', 'kupon'));
     }
     public function update(Request $request, $id)
     {
@@ -337,7 +338,7 @@ class QurbanController extends Controller
     {
         $qurban = Qurban::with('kuponqurban')->get();
 
-        return view('admin.qurban.validasi-manual', compact('qurban'));
+        return view('admin.Qurban.validasi-manual', compact('qurban'));
     }
     public function validasiManualProcess($id)
     {
