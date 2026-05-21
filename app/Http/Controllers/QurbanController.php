@@ -327,9 +327,21 @@ class QurbanController extends Controller
         }
     }
 
-    public function validasiManual()
+    public function validasiManual(Request $request)
     {
-        $qurban = Qurban::with('kuponqurban')->get();
+        $qurban = Qurban::with('kuponqurban')
+            ->when($request->nama, function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->nama . '%');
+            })
+            ->when($request->rw, function ($q) use ($request) {
+                $q->where('rw', $request->rw);
+            })
+            ->when($request->rt, function ($q) use ($request) {
+                $q->where('rt', $request->rt);
+            })
+            ->orderByRaw('CAST(rw AS UNSIGNED) ASC')
+            ->orderByRaw('CAST(rt AS UNSIGNED) ASC')
+            ->get();
 
         return view('admin.Qurban.validasi-manual', compact('qurban'));
     }

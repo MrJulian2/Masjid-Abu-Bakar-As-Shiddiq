@@ -39,28 +39,42 @@
 
             <div class="card-body">
 
-                {{-- SEARCH --}}
-                <div class="mb-3">
+                <form method="GET" action="{{ route('qurban.validasi.manual') }}" class="mb-3">
 
-                    <div class="input-group">
+                    <div class="row">
 
-                        <input type="text" id="searchInput" class="form-control"
-                            placeholder="Cari Nama / HP / RT / RW / QR Code">
+                        <div class="col-md-4 mb-2">
+                            <input type="text" name="nama" class="form-control" placeholder="Cari Nama..."
+                                value="{{ request('nama') }}">
+                        </div>
 
-                        <div class="input-group-append">
+                        <div class="col-md-3 mb-2">
+                            <input type="number" name="rw" class="form-control" placeholder="RW"
+                                value="{{ request('rw') }}">
+                        </div>
 
-                            <button type="button" id="btn-search" class="btn btn-primary">
+                        <div class="col-md-3 mb-2">
+                            <input type="number" name="rt" class="form-control" placeholder="RT"
+                                value="{{ request('rt') }}">
+                        </div>
 
-                                <i class="fas fa-search"></i>
-                                Search
-
+                        {{-- tombol cari --}}
+                        <div class="col-md-2 mb-2">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Cari
                             </button>
+                        </div>
 
+                        {{-- RESET (di luar submit form logic) --}}
+                        <div class="col-md-12">
+                            <a href="{{ route('qurban.validasi.manual') }}" class="btn btn-secondary btn-sm">
+                                Reset Filter
+                            </a>
                         </div>
 
                     </div>
 
-                </div>
+                </form>
 
                 {{-- TABLE --}}
                 <div class="table-responsive">
