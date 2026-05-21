@@ -47,7 +47,7 @@ class KasController extends Controller
         // dd($upcomingEvent);
 
 
-        return view('user.PartialsUser.home',compact('kasWeek','saldoMinggulalu','photo','event','upcomingEvent'));
+        return view('User.PartialsUser.home',compact('kasWeek','saldoMinggulalu','photo','event','upcomingEvent'));
 
 
 
