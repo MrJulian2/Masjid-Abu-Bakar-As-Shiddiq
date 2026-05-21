@@ -145,7 +145,7 @@
 
                                         <td class="text-center">
 
-                                            @if ($k->status != 'Sudah Diambil')
+                                            @if ($k->status != 'sudah_diambil')
                                                 <form action="{{ route('qurban.validasi.manual.process', $k->id) }}"
                                                     method="POST" class="form-validasi">
 
