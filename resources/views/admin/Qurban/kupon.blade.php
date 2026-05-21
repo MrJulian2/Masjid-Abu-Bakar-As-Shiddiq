@@ -95,7 +95,7 @@
                             {{-- QR --}}
                             <div class="qr-area">
 
-                                {!! QrCode::size(90)->generate($kupon->qr_code) !!}
+                                {!! QrCode::size(85)->generate($kupon->qr_code) !!}
 
                                 <div class="kode-kupon">
                                     {{ $kupon->qr_code }}
@@ -132,18 +132,14 @@
 }
 
 /* =========================
-   PAGE BREAK CONTROL
+   PAGE FIX (ANTI ACak)
 ========================= */
 .page {
+    width: 210mm;
+    height: 297mm;
+    padding: 5mm;
+    overflow: hidden;
     page-break-after: always;
-}
-
-/* =========================
-   A4 SETTING
-========================= */
-@page {
-    size: A4;
-    margin: 5mm;
 }
 
 /* =========================
@@ -157,7 +153,7 @@ body {
 }
 
 /* =========================
-   GRID
+   GRID (FLEX STABIL)
 ========================= */
 .kupon-grid {
     display: flex;
@@ -166,25 +162,24 @@ body {
 }
 
 /* =========================
-   CARD (2 KOLOM STABIL)
+   CARD (FIX HEIGHT = SAMA SEMUA)
 ========================= */
 .kupon-card {
     width: calc(50% - 6px);
+
+    height: 230px;   /* 🔥 FIX TINGGI WAJIB */
+    overflow: hidden;
 
     border: 1px dashed #000;
     background: #fff;
 
     padding: 8px;
 
-    min-height: 220px;
-
-    overflow: hidden;
-
     display: flex;
     flex-direction: column;
 
-    break-inside: avoid;
     page-break-inside: avoid;
+    break-inside: avoid;
 }
 
 /* =========================
@@ -193,17 +188,18 @@ body {
 .kop {
     text-align: center;
     border-bottom: 1px solid #000;
-    padding-bottom: 5px;
-    margin-bottom: 5px;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
 }
 
 .masjid {
     font-weight: bold;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .alamat {
     font-size: 9px;
+    line-height: 1.2;
 }
 
 /* =========================
@@ -212,8 +208,8 @@ body {
 .judul-kupon {
     text-align: center;
     font-weight: bold;
-    font-size: 12px;
-    margin-bottom: 6px;
+    font-size: 11px;
+    margin-bottom: 5px;
 }
 
 /* =========================
@@ -227,12 +223,15 @@ body {
 }
 
 /* =========================
-   DATA
+   DATA (FIX HEIGHT AREA)
 ========================= */
 .isi-kupon {
     width: 68%;
-    font-size: 12px;
-    line-height: 1.3;
+    font-size: 11px;
+    line-height: 1.2;
+
+    height: 120px; /* 🔥 FIX AREA TEKS */
+    overflow: hidden;
 }
 
 .isi-kupon table td {
@@ -241,12 +240,12 @@ body {
 }
 
 .isi-kupon table td:first-child {
-    width: 70px;
+    width: 65px;
     font-weight: 600;
 }
 
 /* =========================
-   QR
+   QR AREA (FIX)
 ========================= */
 .qr-area {
     width: 32%;
@@ -254,16 +253,18 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    height: 120px; /* FIX */
 }
 
 .qr-area svg {
-    width: 100px !important;
-    height: 100px !important;
+    width: 85px !important;
+    height: 85px !important;
 }
 
 .kode-kupon {
-    font-size: 8.5px;
-    margin-top: 4px;
+    font-size: 8px;
+    margin-top: 3px;
     text-align: center;
     word-break: break-word;
     font-weight: bold;
@@ -276,11 +277,11 @@ body {
     font-size: 8px;
     font-style: italic;
     text-align: center;
-    padding-top: 5px;
+    padding-top: 4px;
 }
 
 /* =========================
-   PRINT FIX TOTAL
+   PRINT MODE
 ========================= */
 @media print {
 
@@ -293,30 +294,16 @@ body {
         padding: 0;
     }
 
-    .kupon-grid {
-        gap: 5px;
-    }
-
-    .kupon-card {
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-    }
-
     .page {
+        width: 210mm;
+        height: 297mm;
+        overflow: hidden;
         page-break-after: always;
     }
 
-    .isi-kupon {
-        font-size: 11px;
-        line-height: 1.25;
-    }
-
-    .judul-kupon {
-        font-size: 11px;
-    }
-
-    .masjid {
-        font-size: 12px;
+    .kupon-card {
+        height: 230px !important;
+        overflow: hidden !important;
     }
 
     .main-header,
@@ -340,12 +327,12 @@ body {
 
     .kupon-card {
         width: 100%;
-        min-height: auto;
+        height: auto;
     }
 
     .qr-area svg {
-        width: 80px !important;
-        height: 80px !important;
+        width: 75px !important;
+        height: 75px !important;
     }
 }
 
