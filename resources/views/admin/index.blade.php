@@ -16,7 +16,7 @@
     {{-- CSRF TOKEN AJAX --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- 🔥 VITE (INI POSISI BENAR) --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     @yield('head')
 </head>
 
