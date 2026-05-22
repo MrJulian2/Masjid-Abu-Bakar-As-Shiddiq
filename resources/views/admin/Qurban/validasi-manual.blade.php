@@ -90,6 +90,7 @@
                                 <th>RT/RW</th>
                                 <th>QR Code</th>
                                 <th>Status</th>
+                                <th>Dibuat pada</th>
                                 <th>Scanned By</th>
                                 <th>Scanned At</th>
                                 <th width="150">Action</th>
@@ -135,6 +136,9 @@
                                                 </span>
                                             @endif
 
+                                        </td>
+                                        <td>
+                                            {{ $k->created_at->format('d-m-Y H:i:s') ?? 'N/A' }}
                                         </td>
 
                                         <td>
