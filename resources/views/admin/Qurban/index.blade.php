@@ -251,7 +251,7 @@
                                             <span class="badge badge-success">Sudah Diambil</span>
                                         @endif
                                     </td>
-                                    <td>{{ $row->created_at->format('d-m-Y') ?? 'N/A' }}</td>
+                                    <td>{{ $row->created_at->format('d-m-Y H:i:s') ?? 'N/A' }}</td>
                                     <td>{{ $row->user->name ?? 'N/A' }}</td>
                                     <td>{{ $row->updated_by_name ?? 'N/A' }}</td>
 
