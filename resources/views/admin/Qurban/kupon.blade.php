@@ -27,7 +27,57 @@
             </div>
 
         </div>
+        {{-- FILTER --}}
+        <div class="card mb-3 no-print">
 
+            <div class="card-body">
+
+                <form method="GET" action="{{ route('qurban.kupon.index') }}">
+
+                    <div class="row">
+
+                        {{-- NAMA --}}
+                        <div class="col-md-4 mb-2">
+                            <input type="text" name="nama" class="form-control" placeholder="Cari Nama..."
+                                value="{{ request('nama') }}">
+                        </div>
+
+                        {{-- RW --}}
+                        <div class="col-md-2 mb-2">
+                            <input type="number" name="rw" class="form-control" placeholder="RW"
+                                value="{{ request('rw') }}">
+                        </div>
+
+                        {{-- RT --}}
+                        <div class="col-md-2 mb-2">
+                            <input type="number" name="rt" class="form-control" placeholder="RT"
+                                value="{{ request('rt') }}">
+                        </div>
+
+                        {{-- BUTTON --}}
+                        <div class="col-md-2 mb-2">
+                            <button type="submit" class="btn btn-primary btn-block">
+
+                                <i class="fas fa-search"></i>
+                                Cari
+                            </button>
+                        </div>
+
+                        {{-- RESET --}}
+                        <div class="col-md-2 mb-2">
+                            <a href="{{ route('qurban.kupon') }}" class="btn btn-secondary btn-block">
+
+                                Reset
+                            </a>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
         {{-- AREA CETAK (SEMUA KUPON 1 GRID SAJA) --}}
         <div class="print-area">
 
@@ -116,16 +166,16 @@
 @section('script')
     <style>
         /* =========================
-                A4 SETTING
-            ========================= */
+                    A4 SETTING
+                ========================= */
         @page {
             size: A4;
             margin: 5mm;
         }
 
         /* =========================
-                GLOBAL RESET
-            ========================= */
+                    GLOBAL RESET
+                ========================= */
         body {
             margin: 0;
             padding: 0;
@@ -134,8 +184,8 @@
         }
 
         /* =========================
-                GRID 10 KUPON / A4
-            ========================= */
+                    GRID 10 KUPON / A4
+                ========================= */
         .kupon-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -145,8 +195,8 @@
         }
 
         /* =========================
-                CARD KUPON (STABIL)
-            ========================= */
+                    CARD KUPON (STABIL)
+                ========================= */
         .kupon-card {
             border: 1px dashed #000;
             background: #fff;
@@ -164,8 +214,8 @@
         }
 
         /* =========================
-                KOP
-            ========================= */
+                    KOP
+                ========================= */
         .kop {
             text-align: center;
             border-bottom: 1px solid #000;
@@ -185,8 +235,8 @@
         }
 
         /* =========================
-                JUDUL
-            ========================= */
+                    JUDUL
+                ========================= */
         .judul-kupon {
             text-align: center;
             font-weight: bold;
@@ -195,8 +245,8 @@
         }
 
         /* =========================
-                CONTENT
-            ========================= */
+                    CONTENT
+                ========================= */
         .content-kupon {
             display: flex;
             justify-content: space-between;
@@ -206,8 +256,8 @@
         }
 
         /* =========================
-                DATA (TEKS LEBIH BESAR)
-            ========================= */
+                    DATA (TEKS LEBIH BESAR)
+                ========================= */
         .isi-kupon {
             width: 68%;
 
@@ -228,8 +278,8 @@
         }
 
         /* =========================
-                QR AREA (FIX TOTAL CENTER)
-            ========================= */
+                    QR AREA (FIX TOTAL CENTER)
+                ========================= */
         .qr-area {
             width: 32%;
 
@@ -242,8 +292,8 @@
         }
 
         /* =========================
-                QR CODE (AMAN TIDAK HILANG)
-            ========================= */
+                    QR CODE (AMAN TIDAK HILANG)
+                ========================= */
         .qr-area svg {
             width: 110px !important;
             height: 110px !important;
@@ -256,8 +306,8 @@
         }
 
         /* =========================
-                KODE QR
-            ========================= */
+                    KODE QR
+                ========================= */
         .kode-kupon {
             font-size: 9px;
             margin-top: 4px;
@@ -268,8 +318,8 @@
         }
 
         /* =========================
-                PRINT FIX
-            ========================= */
+                    PRINT FIX
+                ========================= */
         @media print {
 
             .no-print {
@@ -308,9 +358,9 @@
         }
 
         /* =========================
-       MOBILE RESPONSIVE ONLY
-       (TIDAK MENGGANGGU PRINT)
-    ========================= */
+           MOBILE RESPONSIVE ONLY
+           (TIDAK MENGGANGGU PRINT)
+        ========================= */
         @media screen and (max-width: 768px) {
 
             /* GRID jadi 1 kolom */

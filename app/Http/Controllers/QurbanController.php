@@ -60,16 +60,30 @@ class QurbanController extends Controller
         ]);
     }
 
-    public function kuponIndex()
+    public function kuponIndex(Request $request)
     {
         $qurban = Qurban::with([
-            'kuponqurban' => function ($q) {
+            'kuponqurban' => function ($q) use ($request) {
+                // hanya kupon belum diambil
                 $q->where('status', 'belum_diambil');
             },
         ])
-            ->orderBy('rw')
-            ->orderBy('rt')
+
+            // FILTER NAMA
+            ->when($request->nama, fn($q) => $q->where('nama', 'like', '%' . $request->nama . '%'))
+
+            // FILTER RW
+            ->when($request->rw, fn($q) => $q->where('rw', $request->rw))
+
+            // FILTER RT
+            ->when($request->rt, fn($q) => $q->where('rt', $request->rt))
+
+            // SORT RW RT
+            ->orderByRaw('CAST(rw AS UNSIGNED) ASC')
+            ->orderByRaw('CAST(rt AS UNSIGNED) ASC')
+
             ->get();
+
         return view('admin.Qurban.kupon', compact('qurban'));
     }
 
