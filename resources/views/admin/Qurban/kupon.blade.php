@@ -65,7 +65,7 @@
 
                         {{-- RESET --}}
                         <div class="col-md-2 mb-2">
-                            <a href="{{ route('qurban.kupon') }}" class="btn btn-secondary btn-block">
+                            <a href="{{ route('qurban.kupon.index') }}" class="btn btn-secondary btn-block">
 
                                 Reset
                             </a>
