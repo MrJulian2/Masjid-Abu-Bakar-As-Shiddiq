@@ -226,6 +226,7 @@
                                 <th>RT / RW</th>
                                 <th>Kupon</th>
                                 <th>Status</th>
+                                <th>Tanggal Input</th>
                                 <th>Ditambahkan Oleh</th>
                                 <th>Diedit Oleh</th>
                                 <th>Aksi</th>
@@ -250,6 +251,7 @@
                                             <span class="badge badge-success">Sudah Diambil</span>
                                         @endif
                                     </td>
+                                    <td>{{ $row->created_at->format('d-m-Y') ?? 'N/A' }}</td>
                                     <td>{{ $row->user->name ?? 'N/A' }}</td>
                                     <td>{{ $row->updated_by_name ?? 'N/A' }}</td>
 
