@@ -27,37 +27,54 @@ class QurbanController extends Controller
             'qr_code' => 'required',
         ]);
 
-        $kupon = kuponqurban::where('qr_code', $request->qr_code)->first();
+        try {
+            $result = DB::transaction(function () use ($request) {
+                $kupon = kuponqurban::where('qr_code', $request->qr_code)->lockForUpdate()->first();
 
-        if (!$kupon) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'QR Code tidak valid!',
-            ]);
+                if (!$kupon) {
+                    return response()->json(
+                        [
+                            'status' => 'error',
+                            'message' => 'QR Code tidak valid!',
+                        ],
+                        404,
+                    );
+                }
+
+                if ($kupon->status == 'sudah_diambil') {
+                    return response()->json([
+                        'status' => 'warning',
+                        'message' => 'Kupon sudah diambil!',
+                    ]);
+                }
+
+                $kupon->update([
+                    'status' => 'sudah_diambil',
+                    'scanned_by' => auth()->id(),
+                    'scanned_at' => now(),
+                    'used_at' => now(),
+                ]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Kupon berhasil diambil',
+                    'nama' => $kupon->qurban->nama,
+                    'rt' => $kupon->qurban->rt,
+                    'rw' => $kupon->qurban->rw,
+                    'qr_code' => $kupon->qr_code,
+                ]);
+            });
+
+            return $result;
+        } catch (\Throwable $e) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'message' => 'Terjadi kesalahan server',
+                ],
+                500,
+            );
         }
-
-        if ($kupon->status == 'sudah_diambil') {
-            return response()->json([
-                'status' => 'warning',
-                'message' => 'Kupon sudah diambil!',
-            ]);
-        }
-
-        $kupon->update([
-            'status' => 'sudah_diambil',
-            'scanned_by' => auth()->id(),
-            'scanned_at' => now(),
-            'used_at' => now(),
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Kupon berhasil diambil',
-            'nama' => $kupon->qurban->nama,
-            'rt' => $kupon->qurban->rt,
-            'rw' => $kupon->qurban->rw,
-            'qr_code' => $kupon->qr_code,
-        ]);
     }
 
     public function kuponIndex(Request $request)
