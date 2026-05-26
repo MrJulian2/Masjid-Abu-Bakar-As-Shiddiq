@@ -210,6 +210,8 @@ Route::prefix('admin')
         Route::get('/qurban/validasi-manual', [QurbanController::class, 'validasiManual'])->name('qurban.validasi.manual');
 
         Route::post('/qurban/validasi-manual/{id}', [QurbanController::class, 'validasiManualProcess'])->name('qurban.validasi.manual.process');
+
+        Route::post('/qurban/print-selected', [QurbanController::class, 'printSelected'])->name('qurban.print.selected');
     });
 
 /*

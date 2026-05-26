@@ -1,151 +1,165 @@
 @extends('admin.index')
 
 @section('content')
-    <div class="container-fluid">
+<div class="container-fluid">
 
-        {{-- HEADER --}}
-        <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
 
-            {{-- LEFT --}}
-            <h3 class="mb-0">Cetak Kupon Qurban</h3>
+        <h3 class="mb-0">Cetak Kupon Qurban</h3>
 
-            {{-- RIGHT BUTTON GROUP --}}
-            <div class="d-flex gap-2">
+        <div class="d-flex gap-2">
 
-                <a href="{{ route('qurban.laporan.pdf') }}" class="btn btn-danger">
-                    <i class="fas fa-file-pdf"></i> Export PDF
-                </a>
+            <a href="{{ route('qurban.laporan.pdf') }}" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </a>
 
-                <button onclick="window.print()" class="btn btn-primary">
-                    <i class="fas fa-print"></i> Print Kupon
-                </button>
+            <button type="button" onclick="window.print()" class="btn btn-primary">
+                <i class="fas fa-print"></i> Print Semua
+            </button>
 
-                <a href="{{ route('qurban.index') }}" class="btn btn-secondary">
-                    Kembali
-                </a>
+            <button type="submit" form="formPrintSelected" class="btn btn-success">
+                <i class="fas fa-check"></i> Cetak Terpilih
+            </button>
 
-            </div>
+            <a href="{{ route('qurban.index') }}" class="btn btn-secondary">
+                Kembali
+            </a>
 
         </div>
-        {{-- FILTER --}}
-        <div class="card mb-3 no-print">
 
-            <div class="card-body">
+    </div>
 
-                <form method="GET" action="{{ route('qurban.kupon.index') }}">
+    {{-- FILTER (INI DIPISAH - TIDAK NESTED FORM) --}}
+    <div class="card mb-3 no-print">
+        <div class="card-body">
 
-                    <div class="row">
+            <form method="GET" action="{{ route('qurban.kupon.index') }}">
+                <div class="row">
 
-                        {{-- NAMA --}}
-                        <div class="col-md-4 mb-2">
-                            <input type="text" name="nama" class="form-control" placeholder="Cari Nama..."
-                                value="{{ request('nama') }}">
-                        </div>
-
-                        {{-- RW --}}
-                        <div class="col-md-2 mb-2">
-                            <input type="number" name="rw" class="form-control" placeholder="RW"
-                                value="{{ request('rw') }}">
-                        </div>
-
-                        {{-- RT --}}
-                        <div class="col-md-2 mb-2">
-                            <input type="number" name="rt" class="form-control" placeholder="RT"
-                                value="{{ request('rt') }}">
-                        </div>
-
-                        {{-- BUTTON --}}
-                        <div class="col-md-2 mb-2">
-                            <button type="submit" class="btn btn-primary btn-block">
-
-                                <i class="fas fa-search"></i>
-                                Cari
-                            </button>
-                        </div>
-
-                        {{-- RESET --}}
-                        <div class="col-md-2 mb-2">
-                            <a href="{{ route('qurban.kupon.index') }}" class="btn btn-secondary btn-block">
-
-                                Reset
-                            </a>
-                        </div>
-
+                    <div class="col-md-4 mb-2">
+                        <input type="text" name="nama" class="form-control"
+                            placeholder="Cari Nama..."
+                            value="{{ request('nama') }}">
                     </div>
 
-                </form>
+                    <div class="col-md-2 mb-2">
+                        <input type="number" name="rw" class="form-control"
+                            placeholder="RW"
+                            value="{{ request('rw') }}">
+                    </div>
 
-            </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="number" name="rt" class="form-control"
+                            placeholder="RT"
+                            value="{{ request('rt') }}">
+                    </div>
+
+                    <div class="col-md-2 mb-2">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Cari
+                        </button>
+                    </div>
+
+                    <div class="col-md-2 mb-2">
+                        <a href="{{ route('qurban.kupon.index') }}" class="btn btn-secondary btn-block">
+                            Reset
+                        </a>
+                    </div>
+
+                </div>
+            </form>
 
         </div>
-        {{-- AREA CETAK (SEMUA KUPON 1 GRID SAJA) --}}
+    </div>
+
+    {{-- FORM PRINT SELECTED --}}
+    <form method="POST" action="{{ route('qurban.print.selected') }}" id="formPrintSelected">
+        @csrf
+
+        {{-- CHECK ALL --}}
+        <div class="mb-3 no-print">
+            <label>
+                <input type="checkbox" id="checkAll">
+                Pilih Semua
+            </label>
+        </div>
+
+        {{-- AREA CETAK --}}
         <div class="print-area">
 
             <div class="kupon-grid">
 
                 @foreach ($qurban as $item)
                     @foreach ($item->kuponqurban as $kupon)
-                        <div class="kupon-card">
 
-                            {{-- KOP --}}
-                            <div class="kop">
-                                <div class="masjid">
-                                    TAKMIR MASJID ABU BAKAR AS-SHIDDIQI
-                                </div>
+                        <div class="kupon-wrapper">
 
-                                <div class="alamat">
-                                    Jl. Kaca Piring Lingkungan Gebang Tengah <br>
-                                    Kelurahan Gebang Kecamatan Patrang Kabupaten Jember
-                                </div>
+                            {{-- CHECKBOX --}}
+                            <div class="no-print mb-1">
+                                <label>
+                                    <input type="checkbox"
+                                        class="item-checkbox"
+                                        name="selected_ids[]"
+                                        value="{{ $item->id }}">
+
+                                    {{ $item->nama }}
+                                    (RT {{ $item->rt }} / RW {{ $item->rw }})
+                                </label>
                             </div>
 
-                            {{-- JUDUL --}}
-                            <div class="judul-kupon">
-                                KUPON PENGAMBILAN DAGING QURBAN
-                            </div>
+                            <div class="kupon-card">
 
-                            {{-- CONTENT --}}
-                            <div class="content-kupon">
+                                {{-- KOP --}}
+                                <div class="kop">
+                                    <div class="masjid">
+                                        TAKMIR MASJID ABU BAKAR AS-SHIDDIQI
+                                    </div>
 
-                                {{-- DATA --}}
-                                <div class="isi-kupon">
-
-                                    <table width="100%">
-                                        <tr>
-                                            <td width="70"><b>Nama</b></td>
-                                            <td>: {{ $item->nama }}</td>
-                                        </tr>
-
-                                        {{-- <tr>
-                                            <td><b>No HP</b></td>
-                                            <td>: {{ $item->nomor_hp }}</td>
-                                        </tr> --}}
-
-                                        <tr>
-                                            <td><b>Alamat</b></td>
-                                            <td>: {{ $item->alamat }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td><b>RT / RW</b></td>
-                                            <td>: {{ $item->rt }} / {{ $item->rw }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" class="note-kupon">
-                                                <b>Note:</b> Kupon harap dibawa saat pengambilan daging qurban
-                                            </td>
-                                        </tr>
-                                    </table>
-
+                                    <div class="alamat">
+                                        Jl. Kaca Piring Lingkungan Gebang Tengah <br>
+                                        Kel. Gebang Kec. Patrang Kab. Jember
+                                    </div>
                                 </div>
 
-                                {{-- QR --}}
-                                <div class="qr-area">
+                                {{-- JUDUL --}}
+                                <div class="judul-kupon">
+                                    KUPON PENGAMBILAN DAGING QURBAN
+                                </div>
 
-                                    {!! QrCode::size(90)->generate($kupon->qr_code) !!}
+                                {{-- CONTENT --}}
+                                <div class="content-kupon">
 
-                                    <div class="kode-kupon">
-                                        {{ $kupon->qr_code }}
+                                    <div class="isi-kupon">
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="70"><b>Nama</b></td>
+                                                <td>: {{ $item->nama }}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td><b>Alamat</b></td>
+                                                <td>: {{ $item->alamat }}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td><b>RT / RW</b></td>
+                                                <td>: {{ $item->rt }} / {{ $item->rw }}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="2" class="note-kupon">
+                                                    <b>Note:</b> Kupon harap dibawa saat pengambilan daging qurban
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="qr-area">
+                                        {!! QrCode::size(90)->generate($kupon->qr_code) !!}
+                                        <div class="kode-kupon">
+                                            {{ $kupon->qr_code }}
+                                        </div>
                                     </div>
 
                                 </div>
@@ -153,6 +167,7 @@
                             </div>
 
                         </div>
+
                     @endforeach
                 @endforeach
 
@@ -160,248 +175,103 @@
 
         </div>
 
-    </div>
+    </form>
+
+</div>
 @endsection
 
 @section('script')
-    <style>
-        /* =========================
-                    A4 SETTING
-                ========================= */
-        @page {
-            size: A4;
-            margin: 5mm;
-        }
+<script>
+document.getElementById('checkAll').addEventListener('change', function () {
+    document.querySelectorAll('.item-checkbox')
+        .forEach(cb => cb.checked = this.checked);
+});
+</script>
 
-        /* =========================
-                    GLOBAL RESET
-                ========================= */
-        body {
-            margin: 0;
-            padding: 0;
-            background: #fff;
-            font-family: Arial, sans-serif;
-        }
+<style>
+@page { size: A4; margin: 5mm; }
 
-        /* =========================
-                    GRID 10 KUPON / A4
-                ========================= */
-        .kupon-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 0;
-            padding: 0;
-        }
+body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    font-family: Arial, sans-serif;
+}
 
-        /* =========================
-                    CARD KUPON (STABIL)
-                ========================= */
-        .kupon-card {
-            border: 1px dashed #000;
-            background: #fff;
+.kupon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
 
-            padding: 10px;
+.kupon-wrapper {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
 
-            height: 220px;
-            overflow: visible;
+.kupon-card {
+    border: 1px dashed #000;
+    padding: 10px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+}
 
-            break-inside: avoid;
-            page-break-inside: avoid;
+.kop {
+    text-align: center;
+    border-bottom: 1px solid #000;
+    margin-bottom: 6px;
+}
 
-            display: flex;
-            flex-direction: column;
-        }
+.masjid { font-weight: bold; font-size: 13px; }
 
-        /* =========================
-                    KOP
-                ========================= */
-        .kop {
-            text-align: center;
-            border-bottom: 1px solid #000;
-            padding-bottom: 6px;
-            margin-bottom: 6px;
-        }
+.alamat { font-size: 9px; }
 
-        .masjid {
-            font-weight: bold;
-            font-size: 13px;
-            line-height: 1.2;
-        }
+.judul-kupon {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
 
-        .alamat {
-            font-size: 9px;
-            line-height: 1.3;
-        }
+.content-kupon {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+}
 
-        /* =========================
-                    JUDUL
-                ========================= */
-        .judul-kupon {
-            text-align: center;
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
+.isi-kupon { width: 68%; font-size: 13px; }
 
-        /* =========================
-                    CONTENT
-                ========================= */
-        .content-kupon {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
+.isi-kupon table td { padding-bottom: 3px; }
 
-            flex: 1;
-        }
+.qr-area {
+    width: 32%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        /* =========================
-                    DATA (TEKS LEBIH BESAR)
-                ========================= */
-        .isi-kupon {
-            width: 68%;
+.kode-kupon {
+    font-size: 9px;
+    text-align: center;
+    margin-top: 4px;
+}
 
-            font-size: 13.5px;
-            /* 🔥 FIX: lebih besar */
-            line-height: 1.5;
-        }
+.note-kupon {
+    font-size: 8px;
+    text-align: center;
+    font-style: italic;
+}
 
-        .isi-kupon table td {
-            padding-bottom: 3px;
-            vertical-align: top;
-        }
-
-        /* label kiri (Nama, HP, dll) */
-        .isi-kupon table td:first-child {
-            width: 75px;
-            font-weight: 600;
-        }
-
-        /* =========================
-                    QR AREA (FIX TOTAL CENTER)
-                ========================= */
-        .qr-area {
-            width: 32%;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            min-height: 120px;
-        }
-
-        /* =========================
-                    QR CODE (AMAN TIDAK HILANG)
-                ========================= */
-        .qr-area svg {
-            width: 110px !important;
-            height: 110px !important;
-
-            max-width: 100%;
-            max-height: 100%;
-
-            display: block;
-            margin: 0 auto;
-        }
-
-        /* =========================
-                    KODE QR
-                ========================= */
-        .kode-kupon {
-            font-size: 9px;
-            margin-top: 4px;
-            line-height: 1.2;
-            text-align: center;
-            word-break: break-all;
-            font-weight: bold;
-        }
-
-        /* =========================
-                    PRINT FIX
-                ========================= */
-        @media print {
-
-            .no-print {
-                display: none !important;
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-                background: #fff;
-            }
-
-            .container-fluid {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-
-            /* hide admin layout */
-            .main-header,
-            .main-sidebar,
-            .navbar,
-            .main-footer,
-            footer,
-            .brand-link {
-                display: none !important;
-            }
-        }
-
-        .note-kupon {
-            padding-top: 6px;
-            font-size: 8.5px;
-            font-style: italic;
-            text-align: center;
-            color: #000;
-            line-height: 1.2;
-        }
-
-        /* =========================
-           MOBILE RESPONSIVE ONLY
-           (TIDAK MENGGANGGU PRINT)
-        ========================= */
-        @media screen and (max-width: 768px) {
-
-            /* GRID jadi 1 kolom */
-            .kupon-grid {
-                grid-template-columns: 1fr !important;
-                gap: 12px !important;
-                padding: 10px;
-            }
-
-            /* CARD auto tinggi */
-            .kupon-card {
-                height: auto !important;
-                min-height: unset !important;
-            }
-
-            /* teks lebih kecil biar muat */
-            .isi-kupon {
-                font-size: 12px !important;
-                width: 65% !important;
-            }
-
-            /* QR lebih kecil */
-            .qr-area svg {
-                width: 80px !important;
-                height: 80px !important;
-            }
-
-            /* HEADER BUTTON STACK */
-            .no-print .d-flex {
-                flex-direction: column !important;
-                width: 100%;
-            }
-
-            .no-print .btn {
-                width: 100% !important;
-            }
-
-            .no-print h3 {
-                text-align: center;
-                width: 100%;
-            }
-        }
-    </style>
+@media print {
+    .no-print { display: none !important; }
+    body { background: #fff; }
+}
+@media print {
+    footer,
+    .main-footer {
+        display: none !important;
+    }
+}
+</style>
 @endsection

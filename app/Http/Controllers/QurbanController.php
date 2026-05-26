@@ -104,6 +104,18 @@ class QurbanController extends Controller
         return view('admin.Qurban.kupon', compact('qurban'));
     }
 
+    public function printSelected(Request $request)
+    {
+        $qurban = Qurban::with([
+            'kuponqurban' => function ($q) {
+                $q->where('status', 'belum_diambil');
+            },
+        ])
+            ->whereIn('id', $request->selected_ids ?? [])
+            ->get();
+
+        return view('admin.Qurban.kupon', compact('qurban'));
+    }
     public function exportPdf()
     {
         $qurban = Qurban::with('kuponqurban')->orderBy('rw')->orderBy('rt')->get();
