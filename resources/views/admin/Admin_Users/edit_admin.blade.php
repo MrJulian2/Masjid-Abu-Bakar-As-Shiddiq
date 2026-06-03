@@ -79,6 +79,7 @@
                                             <option value="bendahara">Bendahara</option>
                                             <option value="sekretaris">Sekretaris</option>
                                             <option value="panitia_qurban">Panitia Qurban</option>
+                                            <option value="panitia_zakat">Panitia Zakat</option>
                                             <option value="event_admin">Event Admin</option>
                                         </select>
                                         @error('role')
