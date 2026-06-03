@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin\Qurban;
 
+use App\Http\Controllers\Controller;
 use App\Models\kuponqurban;
 use App\Models\qurban;
+use App\Models\QurbanPeriode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -15,6 +17,10 @@ class QurbanController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+    private function periodeAktif()
+    {
+        return QurbanPeriode::where('aktif', true)->firstOrFail();
     }
 
     public function scanPage()
@@ -79,13 +85,14 @@ class QurbanController extends Controller
 
     public function kuponIndex(Request $request)
     {
+        $periodeAktif = $this->periodeAktif();
         $qurban = Qurban::with([
             'kuponqurban' => function ($q) use ($request) {
                 // hanya kupon belum diambil
                 $q->where('status', 'belum_diambil');
             },
         ])
-
+            ->where('qurban_periode_id', $periodeAktif->id)
             // FILTER NAMA
             ->when($request->nama, fn($q) => $q->where('nama', 'like', '%' . $request->nama . '%'))
 
@@ -101,38 +108,48 @@ class QurbanController extends Controller
 
             ->get();
 
-        return view('admin.Qurban.kupon', compact('qurban'));
+        return view('admin.Qurban.kupon', compact('qurban', 'periodeAktif'));
     }
 
     public function printSelected(Request $request)
     {
+        $periodeAktif = $this->periodeAktif();
         $qurban = Qurban::with([
             'kuponqurban' => function ($q) {
                 $q->where('status', 'belum_diambil');
             },
         ])
+            ->where('qurban_periode_id', $periodeAktif->id)
             ->whereIn('id', $request->selected_ids ?? [])
             ->get();
 
-        return view('admin.Qurban.kupon', compact('qurban'));
+        return view('admin.Qurban.kupon', compact('qurban', 'periodeAktif'));
     }
     public function exportPdf()
     {
-        $qurban = Qurban::with('kuponqurban')->orderBy('rw')->orderBy('rt')->get();
+        $periodeAktif = $this->periodeAktif();
+        $qurban = Qurban::with('kuponqurban')->where('qurban_periode_id', $periodeAktif->id)->orderBy('rw')->orderBy('rt')->get();
 
         // 🔥 REKAP RW / RT
-        $rwStats = \App\Models\KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')->groupBy('qurbans.rw', 'qurbans.rt')->orderBy('qurbans.rw')->orderBy('qurbans.rt')->get()->groupBy('rw');
+        $rwStats = \App\Models\KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')->where('qurbans.qurban_periode_id', $periodeAktif->id)->groupBy('qurbans.rw', 'qurbans.rt')->orderBy('qurbans.rw')->orderBy('qurbans.rt')->get()->groupBy('rw');
 
-        $pdf = Pdf::loadView('admin.Qurban.laporan-pdf', compact('qurban', 'rwStats'))->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('admin.Qurban.laporan-pdf', compact('qurban', 'rwStats', 'periodeAktif'))->setPaper('a4', 'portrait');
 
         return $pdf->download('laporan-qurban.pdf');
     }
     public function index(Request $request)
     {
         // ==================================================
-        // 1. DATA QURBAN (FILTER + SORT)
+        // PERIODE AKTIF
         // ==================================================
-        $qurban = Qurban::with(['kuponqurban', 'user'])
+        $periodeAktif = QurbanPeriode::where('aktif', true)->first();
+        // ==================================================
+        // DATA QURBAN
+        // ==================================================
+        $qurban = Qurban::with(['kuponqurban', 'user', 'periode'])
+            ->when($periodeAktif, function ($q) use ($periodeAktif) {
+                $q->where('qurban_periode_id', $periodeAktif->id);
+            })
             ->when($request->rw, fn($q) => $q->where('rw', $request->rw))
             ->when($request->rt, fn($q) => $q->where('rt', $request->rt))
             ->when($request->nama, fn($q) => $q->where('nama', 'like', '%' . $request->nama . '%'))
@@ -141,7 +158,7 @@ class QurbanController extends Controller
             ->get();
 
         // ==================================================
-        // 2. STATUS QURBAN (IN MEMORY - NO QUERY LAGI)
+        // STATUS QURBAN
         // ==================================================
         foreach ($qurban as $row) {
             $total = $row->kuponqurban->count();
@@ -158,22 +175,34 @@ class QurbanController extends Controller
         }
 
         // ==================================================
-        // 3. STATISTIK RW / RT (OPTIMIZED QUERY)
+        // REKAP RW RT
         // ==================================================
-        $rwStats = KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')->groupBy('qurbans.rw', 'qurbans.rt')->get()->sortBy(fn($item) => (int) $item->rw)->groupBy('rw')->map(fn($items) => $items->sortBy(fn($i) => (int) $i->rt));
+        $rwStats = KuponQurban::select('qurbans.rw', 'qurbans.rt', DB::raw('COUNT(*) as total'), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'sudah_diambil' THEN 1 ELSE 0 END) as sudah"), DB::raw("SUM(CASE WHEN kuponqurbans.status = 'belum_diambil' THEN 1 ELSE 0 END) as belum"))
+            ->join('qurbans', 'qurbans.id', '=', 'kuponqurbans.qurban_id')
+            ->when($periodeAktif, function ($q) use ($periodeAktif) {
+                $q->where('qurbans.qurban_periode_id', $periodeAktif->id);
+            })
+            ->groupBy('qurbans.rw', 'qurbans.rt')
+            ->get()
+            ->sortBy(fn($item) => (int) $item->rw)
+            ->groupBy('rw')
+            ->map(fn($items) => $items->sortBy(fn($i) => (int) $i->rt));
 
         // ==================================================
-        // 4. RETURN VIEW
+        // VIEW
         // ==================================================
         return view('admin.Qurban.index', [
             'qurban' => $qurban,
             'rwGrouped' => $rwStats,
+            'periodeAktif' => $periodeAktif,
         ]);
     }
 
     public function add()
     {
-        return view('admin.Qurban.tambah');
+        $periodeAktif = $this->periodeAktif();
+
+        return view('admin.Qurban.tambah', compact('periodeAktif'));
     }
 
     public function store(Request $request)
@@ -210,9 +239,16 @@ class QurbanController extends Controller
             DB::beginTransaction();
 
             $user_id = auth()->id();
+            $periodeAktif = QurbanPeriode::where('aktif', true)->first();
+
+            if (!$periodeAktif) {
+                Alert::error('Error', 'Belum ada periode qurban yang aktif');
+                return back();
+            }
 
             // 2. SIMPAN QURBAN
             $qurban = qurban::create([
+                'qurban_periode_id' => $periodeAktif->id,
                 'nama' => $request->nama,
                 'nomor_hp' => $request->nomor_hp ?? '',
                 'alamat' => $request->alamat ?? '',
@@ -249,13 +285,13 @@ class QurbanController extends Controller
     }
     public function edit($id)
     {
-        $qurban = qurban::findOrFail($id);
-        // dd($qurban->id);
+        $periodeAktif = $this->periodeAktif();
 
-        $kupon = kuponqurban::where('qurban_id', $qurban->id)->get();
-        // dd($kupon->toArray());
-        // dd($kupon->toArray());
-        return view('admin.Qurban.edit', compact('qurban', 'kupon'));
+        $qurban = Qurban::where('qurban_periode_id', $periodeAktif->id)->findOrFail($id);
+
+        $kupon = KuponQurban::where('qurban_id', $qurban->id)->get();
+
+        return view('admin.Qurban.edit', compact('qurban', 'kupon', 'periodeAktif'));
     }
     public function update(Request $request, $id)
     {
@@ -296,7 +332,9 @@ class QurbanController extends Controller
 
         try {
             // 2. AMBIL DATA QURBAN
-            $qurban = Qurban::findOrFail($id);
+            $periodeAktif = $this->periodeAktif();
+
+            $qurban = Qurban::where('qurban_periode_id', $periodeAktif->id)->findOrFail($id);
 
             // 3. UPDATE DATA QURBAN
             $qurban->update([
@@ -359,7 +397,9 @@ class QurbanController extends Controller
             abort(403, 'Hanya admin yang dapat mengedit data qurban');
         }
         try {
-            $qurban = qurban::findOrFail($id);
+            $periodeAktif = $this->periodeAktif();
+
+            $qurban = Qurban::where('qurban_periode_id', $periodeAktif->id)->findOrFail($id);
             $qurban->delete();
 
             Alert::success('Berhasil', 'Data berhasil dihapus!');
@@ -372,7 +412,9 @@ class QurbanController extends Controller
 
     public function validasiManual(Request $request)
     {
+        $periodeAktif = $this->periodeAktif();
         $qurban = Qurban::with('kuponqurban')
+            ->where('qurban_periode_id', $periodeAktif->id)
             ->when($request->nama, function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->nama . '%');
             })
@@ -386,11 +428,14 @@ class QurbanController extends Controller
             ->orderByRaw('CAST(rt AS UNSIGNED) ASC')
             ->get();
 
-        return view('admin.Qurban.validasi-manual', compact('qurban'));
+        return view('admin.Qurban.validasi-manual', compact('qurban', 'periodeAktif'));
     }
     public function validasiManualProcess($id)
     {
-        $kupon = KuponQurban::findOrFail($id);
+        $periodeAktif = $this->periodeAktif();
+        $kupon = KuponQurban::whereHas('qurban', function ($q) use ($periodeAktif) {
+            $q->where('qurban_periode_id', $periodeAktif->id);
+        })->findOrFail($id);
 
         // cegah double ambil
         if ($kupon->status == 'sudah_diambil') {

@@ -19,7 +19,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
 
             <h3 class="mb-0">
-                Validasi Manual Kupon Qurban
+                Validasi Manual Kupon Qurban - || - {{ $periodeAktif->nama }}
             </h3>
 
             <a href="{{ route('qurban.index') }}" class="btn btn-secondary">

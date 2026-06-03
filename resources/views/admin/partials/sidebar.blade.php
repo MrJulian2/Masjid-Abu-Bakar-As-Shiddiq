@@ -10,7 +10,11 @@
     $isKasMasjid = request()->is('admin/kas-masjid*');
     $isKasSosial = request()->is('admin/kas-sosial*'); // ← tambah ini
     $isLaporan = request()->is('admin/laporan*');
-    $isQurban = request()->is('admin/qurban*') || Route::is('qurban.*');
+    $isQurban =
+        request()->is('admin/qurban*') ||
+        request()->is('admin/qurban-periode*') ||
+        Route::is('qurban.*') ||
+        Route::is('qurban-periode.*');
     $isProfile = request()->is('admin/profile-setting');
 @endphp
 <!-- Main Sidebar Container -->
@@ -223,7 +227,17 @@
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
+
                     <ul class="nav nav-treeview">
+                        @if (Auth::user()->role == 'admin')
+                            <li class="nav-item">
+                                <a href="{{ route('qurban-periode.index') }}"
+                                    class="nav-link {{ Route::is('qurban-periode.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p> Periode Qurban </p>
+                                </a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a href="{{ url('admin/qurban/add') }}"
                                 class="nav-link {{ request()->is('admin/qurban/add') ? 'active' : '' }}">

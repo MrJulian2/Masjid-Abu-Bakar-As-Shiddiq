@@ -21,10 +21,9 @@ use App\Http\Controllers\Admin\Admin_Profile_Setting\ProfilesettingController;
 use App\Http\Controllers\Admin\Event_Admin\EventadminController;
 use App\Http\Controllers\Admin\Khatib\khatibController;
 use App\Http\Controllers\Admin\Photo_Masjid\PhotoController;
+use App\Http\Controllers\Admin\Qurban\QurbanController;
+use App\Http\Controllers\Admin\Qurban\QurbanPeriodeController;
 use App\Http\Controllers\Admin\Takmir_Masjid\TakmirController;
-
-// QURBAN
-use App\Http\Controllers\QurbanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -212,6 +211,21 @@ Route::prefix('admin')
         Route::post('/qurban/validasi-manual/{id}', [QurbanController::class, 'validasiManualProcess'])->name('qurban.validasi.manual.process');
 
         Route::post('/qurban/print-selected', [QurbanController::class, 'printSelected'])->name('qurban.print.selected');
+
+        /*
+    |--------------------------------------------------------------------------
+    | PERIODE QURBAN
+    |--------------------------------------------------------------------------
+    */
+        Route::get('/qurban-periode', [QurbanPeriodeController::class, 'index'])->name('qurban-periode.index');
+
+        Route::post('/qurban-periode', [QurbanPeriodeController::class, 'store'])->name('qurban-periode.store');
+
+        Route::put('/qurban-periode/{qurbanPeriode}', [QurbanPeriodeController::class, 'update'])->name('qurban-periode.update');
+
+        Route::delete('/qurban-periode/{qurbanPeriode}', [QurbanPeriodeController::class, 'destroy'])->name('qurban-periode.destroy');
+
+        Route::put('/qurban-periode/{id}/aktifkan', [QurbanPeriodeController::class, 'aktifkan'])->name('qurban-periode.aktifkan');
     });
 
 /*

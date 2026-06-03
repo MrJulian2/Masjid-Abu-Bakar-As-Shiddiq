@@ -18,7 +18,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h3>Edit Data Penerima Qurban</h3>
+                <h3>Edit Data Penerima Qurban - || - {{ $periodeAktif->nama }} </h3>
             </div>
 
             <div class="card-body">

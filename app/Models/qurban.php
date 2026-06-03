@@ -8,18 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class qurban extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'nama',
-        'alamat',
-        'rt',
-        'rw',
-        'nomor_hp',
-        'jumlah_kupon',
-        'created_by',
-        'updated_by',
 
-    ];
-
+    protected $table = 'qurbans';
+    protected $fillable = ['nama', 'alamat', 'rt', 'rw', 'nomor_hp', 'jumlah_kupon', 'qurban_periode_id', 'created_by', 'updated_by'];
 
     // relasi dengan kuponqurban
     public function kuponqurban()
@@ -30,5 +21,10 @@ class qurban extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function periode()
+    {
+        return $this->belongsTo(QurbanPeriode::class, 'qurban_periode_id');
     }
 }

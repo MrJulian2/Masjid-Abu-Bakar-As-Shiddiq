@@ -9,6 +9,7 @@ class kuponqurban extends Model
 {
     use HasFactory;
 
+    protected $table = 'kuponqurbans';
     protected $fillable = [
         'qr_code',
         'status',

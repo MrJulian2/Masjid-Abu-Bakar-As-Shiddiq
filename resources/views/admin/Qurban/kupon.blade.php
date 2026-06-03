@@ -6,7 +6,7 @@
     {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-3 no-print">
 
-        <h3 class="mb-0">Cetak Kupon Qurban</h3>
+        <h3 class="mb-0">Cetak Kupon Qurban - || - {{ $periodeAktif->nama }}</h3>
 
         <div class="d-flex gap-2">
 
@@ -124,7 +124,7 @@
 
                                 {{-- JUDUL --}}
                                 <div class="judul-kupon">
-                                    KUPON PENGAMBILAN DAGING QURBAN
+                                    KUPON PENGAMBILAN DAGING QURBAN - {{ $periodeAktif->nama }}
                                 </div>
 
                                 {{-- CONTENT --}}

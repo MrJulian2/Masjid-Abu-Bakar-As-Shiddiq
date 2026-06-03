@@ -93,7 +93,7 @@
 {{-- =========================
     DETAIL DATA
 ========================= --}}
-<div class="section-title">DATA PENERIMA QURBAN</div>
+<div class="section-title">DATA PENERIMA QURBAN - {{ $periodeAktif->nama }}</div>
 
 <table>
     <thead>
