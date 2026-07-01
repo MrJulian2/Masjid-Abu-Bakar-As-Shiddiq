@@ -24,6 +24,9 @@ use App\Http\Controllers\Admin\Photo_Masjid\PhotoController;
 use App\Http\Controllers\Admin\Qurban\QurbanController;
 use App\Http\Controllers\Admin\Qurban\QurbanPeriodeController;
 use App\Http\Controllers\Admin\Takmir_Masjid\TakmirController;
+use App\Http\Controllers\Admin\Zakat\ZakatMuzakkiController;
+use App\Http\Controllers\Admin\Zakat\ZakatOpsiController;
+use App\Http\Controllers\Admin\Zakat\ZakatPeriodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -217,15 +220,80 @@ Route::prefix('admin')
     | PERIODE QURBAN
     |--------------------------------------------------------------------------
     */
-        Route::get('/qurban-periode', [QurbanPeriodeController::class, 'index'])->name('qurban-periode.index');
+        Route::get('/qurban-periode', [QurbanPeriodeController::class, 'index'])
+            ->name('qurban-periode.index')
+            ->middleware('admin:admin');
 
-        Route::post('/qurban-periode', [QurbanPeriodeController::class, 'store'])->name('qurban-periode.store');
+        Route::post('/qurban-periode', [QurbanPeriodeController::class, 'store'])
+            ->name('qurban-periode.store')
+            ->middleware('admin:admin');
 
-        Route::put('/qurban-periode/{qurbanPeriode}', [QurbanPeriodeController::class, 'update'])->name('qurban-periode.update');
+        Route::put('/qurban-periode/{qurbanPeriode}', [QurbanPeriodeController::class, 'update'])
+            ->name('qurban-periode.update')
+            ->middleware('admin:admin');
 
-        Route::delete('/qurban-periode/{qurbanPeriode}', [QurbanPeriodeController::class, 'destroy'])->name('qurban-periode.destroy');
+        Route::delete('/qurban-periode/{qurbanPeriode}', [QurbanPeriodeController::class, 'destroy'])
+            ->name('qurban-periode.destroy')
+            ->middleware('admin:admin');
 
-        Route::put('/qurban-periode/{id}/aktifkan', [QurbanPeriodeController::class, 'aktifkan'])->name('qurban-periode.aktifkan');
+        Route::put('/qurban-periode/{id}/aktifkan', [QurbanPeriodeController::class, 'aktifkan'])
+            ->name('qurban-periode.aktifkan')
+            ->middleware('admin:admin');
+
+        /*
+    |--------------------------------------------------------------------------
+    | Zakat Fitrah
+    |--------------------------------------------------------------------------
+    */
+
+        Route::get('/zakat-muzakki', [ZakatMuzakkiController::class, 'index'])->name('zakat-muzakki.index');
+
+        Route::post('/zakat-muzakki', [ZakatMuzakkiController::class, 'store'])->name('zakat-muzakki.store');
+
+        Route::put('/zakat-muzakki/{id}', [ZakatMuzakkiController::class, 'update'])->name('zakat-muzakki.update');
+
+        Route::delete('/zakat-muzakki/{id}', [ZakatMuzakkiController::class, 'destroy'])->name('zakat-muzakki.destroy');
+
+        Route::get('/dashboard-zakat', [ZakatMuzakkiController::class, 'dashboard'])->name('zakat.dashboard');
+
+        /*
+        |--------------------------------------------------------------------------
+        | OPSI ZAKAT
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/zakat-opsi', [ZakatOpsiController::class, 'index'])->name('zakat-opsi.index');
+        Route::post('/zakat-opsi', [ZakatOpsiController::class, 'store'])->name('zakat-opsi.store');
+        Route::put('/zakat-opsi/{id}', [ZakatOpsiController::class, 'update'])->name('zakat-opsi.update');
+        Route::delete('/zakat-opsi/{id}', [ZakatOpsiController::class, 'destroy'])->name('zakat-opsi.destroy');
+        Route::put('/zakat-opsi/{id}/aktifkan', [ZakatOpsiController::class, 'aktifkan'])->name('zakat-opsi.aktifkan');
+        Route::put('/zakat-opsi/{id}/nonaktifkan', [ZakatOpsiController::class, 'nonaktifkan'])->name('zakat-opsi.nonaktifkan');
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERIODE ZAKAT
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/zakat-periode', [ZakatPeriodeController::class, 'index'])
+            ->name('zakat-periode.index')
+            ->middleware('admin:admin');
+
+        Route::post('/zakat-periode', [ZakatPeriodeController::class, 'store'])
+            ->name('zakat-periode.store')
+            ->middleware('admin:admin');
+
+        Route::put('/zakat-periode/{zakatPeriode}', [ZakatPeriodeController::class, 'update'])
+            ->name('zakat-periode.update')
+            ->middleware('admin:admin');
+
+        Route::delete('/zakat-periode/{zakatPeriode}', [ZakatPeriodeController::class, 'destroy'])
+            ->name('zakat-periode.destroy')
+            ->middleware('admin:admin');
+
+        Route::put('/zakat-periode/{id}/aktifkan', [ZakatPeriodeController::class, 'aktifkan'])
+            ->name('zakat-periode.aktifkan')
+            ->middleware('admin:admin');
     });
 
 /*

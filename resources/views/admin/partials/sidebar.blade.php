@@ -16,6 +16,10 @@
         Route::is('qurban.*') ||
         Route::is('qurban-periode.*');
     $isProfile = request()->is('admin/profile-setting');
+
+    $isZakatPeriode = Route::is('zakat-periode.*');
+    $zakatOpsi = Route::is('zakat-opsi.*');
+
 @endphp
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-masjid elevation-4">
@@ -271,6 +275,86 @@
                                 class="nav-link {{ Route::is('qurban.validasi.manual') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p> Validasi Manual </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Zakat Fitrah --}}
+                <li class="nav-item {{ $isZakatPeriode ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $isZakatPeriode ? 'active' : '' }}">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <p>
+                            Zakat Fitrah
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+
+                        {{-- Periode (opsional admin nanti via feature/middleware) --}}
+                        @if (Auth::user()->role == 'admin')
+                            <li class="nav-item {{ Route::is('zakat-periode.*') ? 'active' : '' }}">
+                                <a href="{{ route('zakat-periode.index') }}"
+                                    class="nav-link {{ Route::is('zakat-periode.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Periode Zakat</p>
+                                </a>
+                            </li>
+                            <li class="nav-item {{ Route::is('zakat-opsi.*') ? 'active' : '' }}">
+                                <a href="{{ route('zakat-opsi.index') }}"
+                                    class="nav-link {{ Route::is('zakat-opsi.*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Setting Zakat</p>
+                                </a>
+                            </li>
+                        @endif
+
+                        <li class="nav-item {{ Route::is('zakat.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('zakat.dashboard') }}"
+                                class="nav-link {{ Route::is('zakat.dashboard') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Dashboard monitoring</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Route::is('zakat-muzakki.*') ? 'active' : '' }}">
+                            <a href="{{ route('zakat-muzakki.index') }}"
+                                class="nav-link  {{ Route::is('zakat-muzakki.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Muzakki (Pembayar Zakat)</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="" class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Mustahik (Penerima Zakat)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Kupon Zakat</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="" class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Scan QR</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="" class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Validasi Manual</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="" class="nav-link ">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Laporan</p>
                             </a>
                         </li>
                     </ul>
