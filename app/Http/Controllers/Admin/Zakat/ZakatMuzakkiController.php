@@ -145,34 +145,247 @@ class ZakatMuzakkiController extends Controller
     /**
      * Display the specified resource.
      */
+
+    public function kelolamuzakki()
+    {
+        $muzakkis = Muzakki::with('details')->latest()->get();
+
+        return view(
+            'admin.Zakat.muzakki-kelola',
+            compact('muzakkis')
+        );
+    }
+
+    public function anggota($id)
+    {
+        $muzakki = Muzakki::with('details')->findOrFail($id);
+        // dd($muzakki);
+        return view('admin.Zakat.muzakki-anggota', compact('muzakki'));
+    }
+
     public function show(string $id)
     {
-        //
+        // $muzakki = Muzakki::with('details')->findOrFail($id);
+
+        // return view('admin.Zakat.muzakki-detail', compact('muzakki'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $muzakki = Muzakki::with('details')->findOrFail($id);
+
+        $opsiBeras = ZakatOpsi::where('jenis', 'beras')
+            ->where('aktif', true)
+            ->get();
+
+        $opsiUang = ZakatOpsi::where('jenis', 'uang')
+            ->where('aktif', true)
+            ->get();
+
+        return view('admin.Zakat.muzakki-edit', compact(
+            'muzakki',
+            'opsiBeras',
+            'opsiUang'
+        ));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+
+
+    public function update(Request $request, $id)
     {
-        //
+        $muzakki = Muzakki::with('details')->findOrFail($id);
+
+        $validated = $request->validate([
+            'kategori'       => 'required|in:setempat,luar',
+            'alamat'         => 'required|string|max:255',
+            'rt'             => 'nullable|required_if:kategori,setempat|numeric',
+            'rw'             => 'nullable|required_if:kategori,setempat|numeric',
+
+            'nama'           => 'required|array|min:1',
+            'nama.*'         => 'required|string|max:255',
+
+            'detail_id'      => 'nullable|array',
+            'detail_id.*'    => 'nullable|integer',
+
+            'jenis_zakat'    => 'required|array|min:1',
+            'jenis_zakat.*'  => 'required|in:beras,uang',
+
+            'berat_beras'    => 'required|array',
+            'berat_beras.*'  => 'nullable|numeric|min:0',
+
+            'nominal_uang'   => 'required|array',
+            'nominal_uang.*' => 'nullable|numeric|min:0',
+        ]);
+
+        // Pastikan seluruh array memiliki jumlah baris yang sama.
+        $jumlahAnggota = count($validated['nama']);
+
+        foreach (['jenis_zakat', 'berat_beras', 'nominal_uang'] as $field) {
+            if (count($validated[$field]) !== $jumlahAnggota) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        $field => 'Data anggota tidak sinkron. Silakan periksa kembali form.',
+                    ]);
+            }
+        }
+
+        DB::transaction(function () use ($validated, $muzakki) {
+
+            // 1. Update data utama Muzakki.
+            $muzakki->update([
+                'kategori' => $validated['kategori'],
+                'alamat'   => $validated['alamat'],
+                'rt'       => $validated['kategori'] === 'setempat'
+                    ? $validated['rt']
+                    : null,
+                'rw'       => $validated['kategori'] === 'setempat'
+                    ? $validated['rw']
+                    : null,
+            ]);
+
+            $detailIdsTersimpan = [];
+
+            // 2. Update anggota lama berdasarkan ID atau insert anggota baru.
+            foreach ($validated['nama'] as $index => $nama) {
+
+                $jenis = $validated['jenis_zakat'][$index];
+
+                $beratBeras = $jenis === 'beras'
+                    ? ($validated['berat_beras'][$index] ?? null)
+                    : null;
+
+                $nominalUang = $jenis === 'uang'
+                    ? ($validated['nominal_uang'][$index] ?? null)
+                    : null;
+
+                // Pastikan nilai untuk jenis zakat yang dipilih tersedia.
+                if ($jenis === 'beras' && $beratBeras === null) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        "berat_beras.$index" => 'Berat beras wajib dipilih.',
+                    ]);
+                }
+
+                if ($jenis === 'uang' && $nominalUang === null) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        "nominal_uang.$index" => 'Nominal uang wajib dipilih.',
+                    ]);
+                }
+
+                $dataDetail = [
+                    'nama'         => $nama,
+                    'jenis_zakat'  => $jenis,
+                    'berat_beras'  => $beratBeras,
+                    'nominal_uang' => $nominalUang,
+                ];
+
+                $detailId = $validated['detail_id'][$index] ?? null;
+
+                if (!empty($detailId)) {
+
+                    // Cari hanya dalam relasi Muzakki ini.
+                    $detail = $muzakki->details()
+                        ->whereKey($detailId)
+                        ->first();
+
+                    // Tolak ID yang bukan milik Muzakki ini.
+                    if (!$detail) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'detail_id' => 'Data anggota tidak valid. Silakan muat ulang halaman.',
+                        ]);
+                    }
+
+                    // Update anggota lama berdasarkan ID.
+                    $detail->update($dataDetail);
+                } else {
+
+                    // Insert anggota baru.
+                    $detail = $muzakki->details()->create($dataDetail);
+                }
+
+                $detailIdsTersimpan[] = $detail->id;
+            }
+
+            // 3. Hapus anggota lama yang memang tidak dikirim dari form.
+            $muzakki->details()
+                ->whereNotIn('id', $detailIdsTersimpan)
+                ->delete();
+        });
+
+        Alert::success('Berhasil', 'Data Muzakki berhasil diperbarui');
+
+        return redirect()->route('zakat-muzakki.kelola');
     }
+
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            // Cari data Muzakki beserta detail anggotanya.
+            $muzakki = Muzakki::with('details')
+                ->lockForUpdate()
+                ->findOrFail($id);
+
+            // Hapus seluruh detail anggota terlebih dahulu.
+            $muzakki->details()->delete();
+
+            // Hapus data utama Muzakki.
+            $muzakki->delete();
+
+            // Simpan perubahan jika semua proses berhasil.
+            DB::commit();
+
+            Alert::success(
+                'Berhasil',
+                'Data Muzakki beserta seluruh detail anggotanya berhasil dihapus.'
+            );
+
+            return redirect()->route('zakat-muzakki.kelola');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Batalkan transaksi jika data tidak ditemukan.
+            DB::rollBack();
+
+            Alert::error(
+                'Gagal',
+                'Data Muzakki tidak ditemukan.'
+            );
+
+            return redirect()->route('zakat-muzakki.kelola');
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Batalkan transaksi jika terjadi kesalahan database.
+            DB::rollBack();
+
+            Alert::error(
+                'Gagal',
+                'Data Muzakki tidak dapat dihapus karena masih memiliki data terkait.'
+            );
+
+            return redirect()->route('zakat-muzakki.kelola');
+        } catch (\Exception $e) {
+            // Batalkan transaksi jika terjadi kesalahan lainnya.
+            DB::rollBack();
+
+            Alert::error(
+                'Gagal',
+                'Terjadi kesalahan saat menghapus data Muzakki.'
+            );
+
+            return redirect()->route('zakat-muzakki.kelola');
+        }
     }
+
 
     public function dashboard()
     {

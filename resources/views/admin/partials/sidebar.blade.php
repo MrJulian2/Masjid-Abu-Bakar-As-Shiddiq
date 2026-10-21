@@ -1,3 +1,4 @@
+
 @php
     $isHome = request()->is('admin');
 
@@ -8,19 +9,26 @@
     $isKhatib = Route::is('khatib.*');
 
     $isKasMasjid = request()->is('admin/kas-masjid*');
-    $isKasSosial = request()->is('admin/kas-sosial*'); // ← tambah ini
+    $isKasSosial = request()->is('admin/kas-sosial*');
     $isLaporan = request()->is('admin/laporan*');
+
     $isQurban =
         request()->is('admin/qurban*') ||
         request()->is('admin/qurban-periode*') ||
         Route::is('qurban.*') ||
         Route::is('qurban-periode.*');
+
+    // Zakat Fitrah: aktif untuk seluruh halaman child
+    $isZakat =
+        Route::is('zakat.*') ||
+        Route::is('zakat-periode.*') ||
+        Route::is('zakat-opsi.*') ||
+        Route::is('zakat-muzakki.*') ||
+        Route::is('zakat-mustahik.*');
+
     $isProfile = request()->is('admin/profile-setting');
-
-    $isZakatPeriode = Route::is('zakat-periode.*');
-    $zakatOpsi = Route::is('zakat-opsi.*');
-
 @endphp
+
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-masjid elevation-4">
     <!-- Brand Logo -->
@@ -281,8 +289,8 @@
                 </li>
 
                 {{-- Zakat Fitrah --}}
-                <li class="nav-item {{ $isZakatPeriode ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ $isZakatPeriode ? 'active' : '' }}">
+                <li class="nav-item {{ $isZakat ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $isZakat ? 'active' : '' }}">
                         <i class="fas fa-hand-holding-heart"></i>
                         <p>
                             Zakat Fitrah
@@ -317,20 +325,28 @@
                                 <p>Dashboard monitoring</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ Route::is('zakat-muzakki.*') ? 'active' : '' }}">
+                        <li class="nav-item {{ Route::is('zakat-muzakki.index') ? 'active' : '' }}">
                             <a href="{{ route('zakat-muzakki.index') }}"
-                                class="nav-link  {{ Route::is('zakat-muzakki.*') ? 'active' : '' }}">
+                                class="nav-link  {{ Route::is('zakat-muzakki.index') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Muzakki (Pembayar Zakat)</p>
                             </a>
                         </li>
-
-                        <li class="nav-item">
-                            <a href="" class="nav-link ">
+                        <li class="nav-item {{ Route::is('zakat-muzakki.kelola') ? 'active' : '' }}">
+                            <a href="{{ route('zakat-muzakki.kelola') }}"
+                                class="nav-link  {{ Route::is('zakat-muzakki.kelola') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Mustahik (Penerima Zakat)</p>
+                                <p>Kelola Muzakki</p>
                             </a>
                         </li>
+
+                        <li class="nav-item {{ Route::is('zakat-mustahik.create') ? 'active' : '' }}">
+                            <a href="{{ route('zakat-mustahik.create') }}" class="nav-link {{ Route::is('zakat-mustahik.create') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Tambah Mustahik (Penerima Zakat)</p>
+                            </a>
+                        </li>
+
                         <li class="nav-item">
                             <a href="" class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>

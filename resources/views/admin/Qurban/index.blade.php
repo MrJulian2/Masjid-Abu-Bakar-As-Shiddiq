@@ -18,7 +18,21 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Data Penerima Qurban - || - {{ $periodeAktif->nama }}</h1>
+                    <h1>Data Penerima Qurban</h1>
+
+                    @if ($periodeAktif)
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            Periode: {{ $periodeAktif->nama }}
+                        </p>
+                    @else
+                        <div class="alert alert-warning mt-2 mb-0 py-2">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            <strong>Belum Ada Periode Qurban Aktif!</strong>
+                            <br>
+                            <small>Silakan aktifkan periode terlebih dahulu.</small>
+                        </div>
+                    @endif
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">

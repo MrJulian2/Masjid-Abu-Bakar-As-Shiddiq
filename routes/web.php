@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\Photo_Masjid\PhotoController;
 use App\Http\Controllers\Admin\Qurban\QurbanController;
 use App\Http\Controllers\Admin\Qurban\QurbanPeriodeController;
 use App\Http\Controllers\Admin\Takmir_Masjid\TakmirController;
+use App\Http\Controllers\Admin\Zakat\MustahikController;
 use App\Http\Controllers\Admin\Zakat\ZakatMuzakkiController;
 use App\Http\Controllers\Admin\Zakat\ZakatOpsiController;
 use App\Http\Controllers\Admin\Zakat\ZakatPeriodeController;
@@ -253,6 +254,20 @@ Route::prefix('admin')
         Route::put('/zakat-muzakki/{id}', [ZakatMuzakkiController::class, 'update'])->name('zakat-muzakki.update');
 
         Route::delete('/zakat-muzakki/{id}', [ZakatMuzakkiController::class, 'destroy'])->name('zakat-muzakki.destroy');
+
+        Route::get('/zakat-muzakki/kelola', [ZakatMuzakkiController::class, 'kelolamuzakki'])->name('zakat-muzakki.kelola');
+        
+        Route::get('/zakat-muzakki/{id}/edit', [ZakatMuzakkiController::class,'edit'])->name('zakat-muzakki.edit');
+
+        Route::get('/zakat-muzakki/{id}/anggota', [ZakatMuzakkiController::class,'anggota'])->name('zakat-muzakki.anggota');
+        
+        Route::get('/zakat-mustahik', [MustahikController::class, 'create'])->name('zakat-mustahik.create');
+
+        Route::post('/zakat-mustahik', [MustahikController::class, 'store'])->name('zakat-mustahik.store');
+
+        Route::put('/zakat-mustahik/{id}', [MustahikController::class, 'update'])->name('zakat-mustahik.update');
+
+        Route::delete('/zakat-mustahik/{id}', [MustahikController::class, 'destroy'])->name('zakat-mustahik.destroy');
 
         Route::get('/dashboard-zakat', [ZakatMuzakkiController::class, 'dashboard'])->name('zakat.dashboard');
 

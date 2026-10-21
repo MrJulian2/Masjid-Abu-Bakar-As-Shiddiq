@@ -24,4 +24,11 @@ class ZakatPeriode extends Model
     {
         return $this->hasMany(zakatopsi::class, 'periode_id');
     }
+    public function mustahiks()
+    {
+        return $this->hasMany(
+            Mustahik::class,
+            'periode_id'
+        );
+    }
 }
