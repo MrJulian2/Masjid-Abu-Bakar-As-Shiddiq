@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mustahik extends Model
 {
@@ -44,6 +45,14 @@ class Mustahik extends Model
         return $this->belongsTo(
             User::class,
             'updated_by'
+        );
+    }
+
+    public function kuponmustahik(): HasMany
+    {
+        return $this->hasMany(
+            KuponMustahik::class,
+            'mustahik_id'
         );
     }
 }

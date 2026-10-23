@@ -70,4 +70,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(kuponqurban::class, 'scanned_by');
     }
+
+    public function kuponmustahik()
+    {
+        return $this->hasMany(kuponmustahik::class, 'scanned_by');
+    }
+
+    public function zakat_muzakki()
+    {
+        return $this->hasMany(muzakki::class, 'created_by');
+    }
 }

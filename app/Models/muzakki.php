@@ -22,6 +22,8 @@ class muzakki extends Model
         'total_jiwa',
         'total_beras',
         'total_uang',
+        'created_by',
+        'updated_by',
     ];
 
 
@@ -39,5 +41,10 @@ class muzakki extends Model
     public function details()
     {
         return $this->hasMany(muzakki_detail::class, 'muzakki_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

@@ -81,11 +81,12 @@ class ZakatMuzakkiController extends Controller
                 Alert::error('Gagal', 'Tidak ada periode zakat fitrah yang aktif. Silakan aktifkan periode terlebih dahulu.');
                 return redirect()->back()->withInput();
             }
-
+            $user = auth()->user();
             $muzakki = muzakki::create([
                 'periode_id' => $periodeAktif->id,
                 'kategori' => $request->kategori,
                 'alamat' => $request->alamat,
+                'created_by' => $user->id,
                 'rt' => $request->kategori == 'luar' ? null : $request->rt,
                 'rw' => $request->kategori == 'luar' ? null : $request->rw,
             ]);
@@ -239,6 +240,7 @@ class ZakatMuzakkiController extends Controller
         DB::transaction(function () use ($validated, $muzakki) {
 
             // 1. Update data utama Muzakki.
+            $user = auth()->user();
             $muzakki->update([
                 'kategori' => $validated['kategori'],
                 'alamat'   => $validated['alamat'],
@@ -248,6 +250,7 @@ class ZakatMuzakkiController extends Controller
                 'rw'       => $validated['kategori'] === 'setempat'
                     ? $validated['rw']
                     : null,
+                'updated_by' => $user->id,
             ]);
 
             $detailIdsTersimpan = [];

@@ -265,9 +265,21 @@ Route::prefix('admin')
 
         Route::post('/zakat-mustahik', [MustahikController::class, 'store'])->name('zakat-mustahik.store');
 
+        Route::get('/zakat-mustahik/kelola', [MustahikController::class, 'kelolamustahik'])->name('zakat-mustahik.kelola');
+
+        Route::get('/zakat-mustahik/{id}/edit', [MustahikController::class, 'edit'])->name('zakat-mustahik.edit');
+
         Route::put('/zakat-mustahik/{id}', [MustahikController::class, 'update'])->name('zakat-mustahik.update');
 
         Route::delete('/zakat-mustahik/{id}', [MustahikController::class, 'destroy'])->name('zakat-mustahik.destroy');
+
+        Route::get('/zakat-mustahik/kupon', [MustahikController::class, 'halamanCetakKupon'])->name('zakat-mustahik.halamanCetakKupon');
+
+        Route::post('/zakat-mustahik/kupon', [MustahikController::class, 'printSelected'])->name('zakat-mustahik.printSelected');
+
+        Route::post('/zakat-mustahik/kupon/cetak', [MustahikController::class, 'cetakKupon'])->name('zakat-mustahik.cetakKupon');
+
+
 
         Route::get('/dashboard-zakat', [ZakatMuzakkiController::class, 'dashboard'])->name('zakat.dashboard');
 

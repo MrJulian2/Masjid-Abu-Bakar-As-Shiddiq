@@ -282,7 +282,7 @@
                             <a href="{{ route('qurban.validasi.manual') }}"
                                 class="nav-link {{ Route::is('qurban.validasi.manual') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p> Validasi Manual </p>
+                                <p> Validasi Manual (Penerimaan Qurban) </p>
                             </a>
                         </li>
                     </ul>
@@ -346,9 +346,15 @@
                                 <p>Tambah Mustahik (Penerima Zakat)</p>
                             </a>
                         </li>
+                        <li class="nav-item {{ Route::is('zakat-mustahik.kelola') ? 'active' : '' }}">
+                            <a href="{{ route('zakat-mustahik.kelola') }}" class="nav-link {{ Route::is('zakat-mustahik.kelola') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Kelola Mustahik (Penerima Zakat)</p>
+                            </a>
+                        </li>
 
-                        <li class="nav-item">
-                            <a href="" class="nav-link ">
+                        <li class="nav-item {{ Route::is('zakat-mustahik.halamanCetakKupon') ? 'active' : '' }}">
+                            <a href="{{ route('zakat-mustahik.halamanCetakKupon') }}" class="nav-link {{ Route::is('zakat-mustahik.halamanCetakKupon') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Kupon Zakat</p>
                             </a>
@@ -364,7 +370,7 @@
                         <li class="nav-item">
                             <a href="" class="nav-link ">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Validasi Manual</p>
+                                <p>Validasi Manual (Penerimaan Zakat)</p>
                             </a>
                         </li>
                         <li class="nav-item">

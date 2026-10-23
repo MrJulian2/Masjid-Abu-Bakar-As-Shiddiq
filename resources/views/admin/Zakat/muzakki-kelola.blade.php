@@ -34,6 +34,7 @@
                                     <th>Kategori</th>
                                     <th>RT</th>
                                     <th>RW</th>
+                                    <th>Dibuat Oleh</th>
                                     <th>Jumlah Anggota</th>
                                     <th>Total Beras</th>
                                     <th>Total Uang</th>
@@ -76,6 +77,16 @@
 
                                         <td class="text-center">
                                             {{ $muzakki->rw ?? '-' }}
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if ($muzakki->creator)
+                                                {{ $muzakki->creator->name }}
+                                            @else
+                                                <span class="text-muted">
+                                                    Tidak diketahui
+                                                </span>
+                                            @endif
                                         </td>
 
                                         <td class="text-center">
